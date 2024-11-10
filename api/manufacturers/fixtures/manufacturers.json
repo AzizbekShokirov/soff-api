@@ -1,0 +1,72 @@
+[
+    {
+        "model": "manufacturers.manufacturer",
+        "pk": 1,
+        "fields": {
+            "name": "IKEA",
+            "description": "Swedish multinational group that designs and sells ready-to-assemble furniture.",
+            "logo": "images/manufacturers/ikea_logo.jpg",
+            "slug": "ikea",
+            "instagram_url": "https://www.instagram.com/ikea/",
+            "telegram_url": null,
+            "created_at": "2024-11-10T12:00:00Z",
+            "updated_at": "2024-11-10T12:00:00Z"
+        }
+    },
+    {
+        "model": "manufacturers.manufacturer",
+        "pk": 2,
+        "fields": {
+            "name": "Ashley Furniture",
+            "description": "American home furniture manufacturer and retailer.",
+            "logo": "images/manufacturers/ashley_furniture_logo.jpg",
+            "slug": "ashley-furniture",
+            "instagram_url": "https://www.instagram.com/ashleyfurniture/",
+            "telegram_url": null,
+            "created_at": "2024-11-10T12:05:00Z",
+            "updated_at": "2024-11-10T12:05:00Z"
+        }
+    },
+    {
+        "model": "manufacturers.manufacturer",
+        "pk": 3,
+        "fields": {
+            "name": "Herman Miller",
+            "description": "American manufacturer of office furniture and equipment.",
+            "logo": "images/manufacturers/herman_miller_logo.jpg",
+            "slug": "herman-miller",
+            "instagram_url": "https://www.instagram.com/hermanmiller/",
+            "telegram_url": null,
+            "created_at": "2024-11-10T12:10:00Z",
+            "updated_at": "2024-11-10T12:10:00Z"
+        }
+    },
+    {
+        "model": "manufacturers.manufacturer",
+        "pk": 4,
+        "fields": {
+            "name": "West Elm",
+            "description": "A modern furniture and home décor company, part of Williams-Sonoma.",
+            "logo": "images/manufacturers/west_elm_logo.jpg",
+            "slug": "west-elm",
+            "instagram_url": "https://www.instagram.com/westelm/",
+            "telegram_url": null,
+            "created_at": "2024-11-10T12:15:00Z",
+            "updated_at": "2024-11-10T12:15:00Z"
+        }
+    },
+    {
+        "model": "manufacturers.manufacturer",
+        "pk": 5,
+        "fields": {
+            "name": "Crate & Barrel",
+            "description": "An American chain of retail stores that sells housewares, furniture, and home accessories.",
+            "logo": "images/manufacturers/crate_barrel_logo.jpg",
+            "slug": "crate-barrel",
+            "instagram_url": "https://www.instagram.com/crateandbarrel/",
+            "telegram_url": null,
+            "created_at": "2024-11-10T12:20:00Z",
+            "updated_at": "2024-11-10T12:20:00Z"
+        }
+    }
+]
