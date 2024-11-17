@@ -4,7 +4,7 @@ from .models import ProductCategory, RoomCategory
 
 @admin.register(RoomCategory)
 class RoomCategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'slug', 'created_at', 'updated_at')
+    list_display = ('name', 'slug', 'id', 'created_at', 'updated_at')
     search_fields = ('name', 'slug')
     ordering = ('id', 'name')
     prepopulated_fields = {'slug': ('name',)}
@@ -12,7 +12,7 @@ class RoomCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(ProductCategory)
 class ProductCategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'slug', 'created_at', 'updated_at')
+    list_display = ('name', 'slug', 'id', 'created_at', 'updated_at')
     search_fields = ('name', 'slug')
     ordering = ('id', 'name')
     prepopulated_fields = {'slug': ('name',)}

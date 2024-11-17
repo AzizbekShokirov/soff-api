@@ -34,6 +34,13 @@ class ProductView(APIView):
                 required=False,
             ),
             openapi.Parameter(
+                "manufacturer",
+                openapi.IN_QUERY,
+                description="Filter by manufacturer (e.g., dafna, ikea).",
+                type=openapi.TYPE_STRING,
+                required=False,
+            ),
+            openapi.Parameter(
                 "min_price",
                 openapi.IN_QUERY,
                 description="Filter by minimum price.",
@@ -54,16 +61,21 @@ class ProductView(APIView):
         queryset = Product.objects.all().order_by('id')
         room_category = request.query_params.get("room_category", None)
         product_category = request.query_params.get("product_category", None)
+        manufacturer = request.query_params.get("manufacturer", None)
         min_price = request.query_params.get("min_price", None)
         max_price = request.query_params.get("max_price", None)
 
         filters = {}
         if room_category:
             room_categories = room_category.split(",")
-            filters["room_category__id__in"] = room_categories
+            filters["room_category__slug__in"] = room_categories
         if product_category:
             product_categories = product_category.split(",")
-            filters["product_category__id__in"] = product_categories
+            filters["product_category__slug__in"] = product_categories
+        if manufacturer:
+            manufacturers = manufacturer.split(",")
+            filters["manufacturer__slug__in"] = manufacturers
+            
         if min_price:
             try:
                 filters["price__gte"] = float(min_price)

@@ -11,6 +11,7 @@ from .views import (
     PasswordResetView,
     ProfileView,
     RegisterView,
+    TokenRefreshView,
 )
 
 app_name = "accounts"
@@ -38,4 +39,5 @@ urlpatterns = [
     ),
     path("favorites", FavoriteView.as_view(), name="favorites"),
     path("otp/resend", OTPResendView.as_view(), name="otp-resend"),
+    path("token/refresh", TokenRefreshView.as_view(), name="token-refresh"),
 ]

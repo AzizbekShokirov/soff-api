@@ -1,3 +1,4 @@
+from django.contrib.auth.models import update_last_login
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -11,16 +12,16 @@ from .serializers import (
     EmailVerificationSerializer,
     FavoriteSerializer,
     LoginSerializer,
-    LogoutSerializer,
-    OTPVerificationSerializer,
+    OTPValidationSerializer,
     PasswordChangeSerializer,
     PasswordResetConfirmSerializer,
     ProfileSerializer,
+    RefreshTokenSerializer,
     RegisterSerializer,
 )
 from .utils import (
-    generate_and_send_otp,
     send_confirmation_email,
+    send_otp_email,
 )
 
 
@@ -32,9 +33,15 @@ class RegisterView(APIView):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            print(user)
-            generate_and_send_otp(user)
-
+            user_otp = UserOTP.objects.filter(user=user).first()
+            if user_otp and user_otp.is_max_attempts_reached():
+                return Response(
+                    {
+                        "error": "You have reached the maximum number of OTP attempts. Please try again later."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            send_otp_email(user)
             return Response(
                 {
                     "message": "You have registered successfully. We have sent you an OTP to verify your email. Please check your email.",
@@ -46,18 +53,21 @@ class RegisterView(APIView):
                 },
                 status=status.HTTP_201_CREATED,
             )
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ConfirmEmailView(APIView):
     permission_classes = [AllowAny]
 
-    @swagger_auto_schema(request_body=OTPVerificationSerializer)
+    @swagger_auto_schema(request_body=OTPValidationSerializer)
     def post(self, request):
-        serializer = OTPVerificationSerializer(data=request.data)
+        serializer = OTPValidationSerializer(data=request.data)
         if serializer.is_valid():
             user = User.objects.get(email=serializer.validated_data["email"])
-            user_otp = UserOTP.objects.get(user__email=user.email, otp=serializer.validated_data["otp"])
+            user_otp = UserOTP.objects.get(
+                user__email=user.email, otp=serializer.validated_data["otp"]
+            )
             # If OTP is valid, reset attempts and unblock the user if necessary
             if user_otp.otp == serializer.validated_data["otp"]:
                 user_otp.otp_attempts = 3
@@ -66,7 +76,7 @@ class ConfirmEmailView(APIView):
                 # Activate the user
                 user.is_active = True
                 user.save()
-            
+
             send_confirmation_email(request, user, purpose="account_confirmation")
             return Response(
                 {"message": "Email confirmed successfully. You can now log in."},
@@ -84,65 +94,38 @@ class LoginView(APIView):
         if serializer.is_valid():
             user = serializer.validated_data["user"]
 
+            update_last_login(None, user)
             refresh_token = RefreshToken.for_user(user)
             tokens = {
                 "refresh": str(refresh_token),
                 "access": str(refresh_token.access_token),
             }
             return Response(
-                {"user": {"email": user.email, **tokens}}, status=status.HTTP_200_OK
+                {"user": {"email": user.email, "tokens": tokens}},
+                status=status.HTTP_200_OK,
             )
-        return Response(
-            {"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST
-        )
-
-
-class LogoutView(APIView):
-    @swagger_auto_schema(request_body=LogoutSerializer)
-    def post(self, request):
-        serializer = LogoutSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        refresh_token = serializer.validated_data["refresh"]
-
-        try:
-            token = RefreshToken(refresh_token)
-            token.blacklist()
-
-            return Response(
-                {"message": "Logout successful"}, status=status.HTTP_205_RESET_CONTENT
-            )
-        except TokenError:
-            return Response(
-                {"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-
-class ProfileView(APIView):
-    def get(self, request):
-        user = request.user
-        serializer = ProfileSerializer(user)
-        return Response(serializer.data)
-
-    @swagger_auto_schema(request_body=ProfileSerializer)
-    def put(self, request):
-        user = request.user
-        serializer = ProfileSerializer(user, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class PasswordChangeView(APIView):
-    @swagger_auto_schema(request_body=PasswordChangeSerializer)
+class LogoutView(APIView):
+    @swagger_auto_schema(request_body=RefreshTokenSerializer)
     def post(self, request):
-        serializer = PasswordChangeSerializer(
-            data=request.data, context={"request": request}
-        )
+        serializer = RefreshTokenSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            refresh_token = serializer.validated_data["refresh"]
+            try:
+                # Decode the refresh token and blacklist it
+                token = RefreshToken(refresh_token)
+                token.blacklist()
 
+                return Response(
+                    {"message": "Logout successful"},
+                    status=status.HTTP_205_RESET_CONTENT,
+                )
+            except TokenError:
+                return Response(
+                    {"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST
+                )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -159,20 +142,11 @@ class PasswordResetView(APIView):
             if user_otp and user_otp.is_max_attempts_reached():
                 return Response(
                     {
-                        "error": "You have reached the maximum number of OTP attempts. Please try again later."
+                        "error": "You have reached the maximum number of attempts. Please try again later."
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
-            if user_otp and user_otp.is_blocked:
-                return Response(
-                    {
-                        "error": "Your account is temporarily blocked due to too many failed attempts."
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            generate_and_send_otp(user)
+            send_otp_email(user)
             return Response(
                 {"message": "Password reset OTP has been sent to your email."},
                 status=status.HTTP_200_OK,
@@ -219,11 +193,77 @@ class OTPResendView(APIView):
         serializer = EmailVerificationSerializer(data=request.data)
         if serializer.is_valid():
             user = User.objects.get(email=serializer.validated_data["email"])
-            generate_and_send_otp(user)
+            if user.otp and user.otp.is_max_attempts_reached():
+                return Response(
+                    {
+                        "error": "You have reached the maximum number of attempts. Please try again later."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            send_otp_email(user)
             return Response(
                 {"message": "OTP has been resent to your email."},
                 status=status.HTTP_200_OK,
             )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TokenRefreshView(APIView):
+    permission_classes = [AllowAny]
+
+    @swagger_auto_schema(request_body=RefreshTokenSerializer)
+    def post(self, request):
+        serializer = RefreshTokenSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                refresh_token = serializer.validated_data["refresh"]
+                # Decode the refresh token and generate a new access token
+                token = RefreshToken(refresh_token)
+                new_access_token = token.access_token
+                return Response(
+                    {
+                        "access": str(new_access_token),
+                        "refresh": str(token),
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            except TokenError:
+                return Response(
+                    {"error": "Invalid refresh token"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PasswordChangeView(APIView):
+    @swagger_auto_schema(request_body=PasswordChangeSerializer)
+    def post(self, request):
+        serializer = PasswordChangeSerializer(
+            data=request.data, context={"request": request}
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProfileView(APIView):
+    def get(self, request):
+        user = request.user
+        serializer = ProfileSerializer(user, data=request.data)
+        if serializer.is_valid():
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(request_body=ProfileSerializer)
+    def put(self, request):
+        user = request.user
+        serializer = ProfileSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

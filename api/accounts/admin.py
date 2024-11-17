@@ -44,17 +44,19 @@ class UserOTPAdmin(admin.ModelAdmin):
         "user",
         "otp",
         "otp_attempts",
-        "created_at",
         "is_blocked",
         "expires_at",
+        "created_at",
+        "updated_at",
     )
     search_fields = (
         "user",
         "otp",
         "otp_attempts",
-        "created_at",
         "is_blocked",
         "expires_at",
+        "created_at",
+        "updated_at",
     )
     list_filter = ("otp_attempts", "is_blocked", "expires_at")
     ordering = (

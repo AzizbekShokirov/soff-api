@@ -2,6 +2,8 @@ from decimal import Decimal
 
 from categories.models import ProductCategory, RoomCategory
 from categories.serializers import ProductCategorySerializer, RoomCategorySerializer
+from manufacturers.models import Manufacturer
+from manufacturers.serializers import ManufacturerSerializer
 from django.core.validators import MaxValueValidator, MinValueValidator
 from rest_framework import serializers
 
@@ -66,6 +68,7 @@ class ProductSerializer(serializers.ModelSerializer):
     )
     room_category = RoomCategorySerializer()
     product_category = ProductCategorySerializer()
+    manufacturer = ManufacturerSerializer()
     images = ProductImageSerializer(many=True)
 
     class Meta:
@@ -76,19 +79,24 @@ class ProductSerializer(serializers.ModelSerializer):
         images_data = validated_data.pop("images")
         room_category_data = validated_data.pop("room_category")
         product_category_data = validated_data.pop("product_category")
+        manufacturer_data = validated_data.pop("manufacturer")
 
-        # Create RoomCategory and ProductCategory instances
-        room_category, created = RoomCategory.objects.get_or_create(
+        room_category = RoomCategory.objects.get(
             **room_category_data
         )
 
-        product_category, created = ProductCategory.objects.get_or_create(
+        product_category = ProductCategory.objects.get(
             **product_category_data
+        )
+        
+        manufacturer = Manufacturer.objects.get(
+            **manufacturer_data
         )
 
         product = Product.objects.create(
             room_category=room_category,
             product_category=product_category,
+            manufacturer=manufacturer
             **validated_data,
         )
 
@@ -102,19 +110,26 @@ class ProductSerializer(serializers.ModelSerializer):
         images_data = validated_data.pop("images", None)  # Get images data
         room_category_data = validated_data.pop("room_category", None)
         product_category_data = validated_data.pop("product_category", None)
+        manufacturer_data = validated_data.pop("manufacturer", None)
 
         if room_category_data:
-            room_category, created = RoomCategory.objects.update_or_create(
+            room_category, created = RoomCategory.objects.get(
                 id=instance.room_category.id, defaults=room_category_data
             )
             instance.room_category = room_category
 
         if product_category_data:
-            product_category, created = ProductCategory.objects.update_or_create(
+            product_category, created = ProductCategory.objects.get(
                 id=instance.product_category.id, defaults=product_category_data
             )
             instance.product_category = product_category
 
+        if manufacturer_data:
+            manufacturer, created = Manufacturer.objects.get(
+                id=instance.manufacturer.id, defaults=manufacturer_data
+            )
+            instance.manufacturer = manufacturer
+        
         # Update other fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)

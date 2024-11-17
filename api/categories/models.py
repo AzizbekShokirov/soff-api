@@ -3,6 +3,7 @@ from django.db import models
 
 class RoomCategory(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    image = models.ImageField(upload_to="images/room_categories", null=True, blank=True)
     slug = models.SlugField(max_length=100, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -17,6 +18,7 @@ class RoomCategory(models.Model):
 
 class ProductCategory(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    image = models.ImageField(upload_to="images/product_categories", null=True, blank=True)
     slug = models.SlugField(max_length=100, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

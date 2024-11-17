@@ -1,5 +1,5 @@
-from datetime import timedelta
 import random
+from datetime import timedelta
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -21,23 +21,18 @@ def send_email(subject, message, recipient_list):
         print(f"Failed to send email: {e}")
 
 
-def generate_and_send_otp(user):
+def send_otp_email(user):
     otp = random.randint(100000, 999999)
     user_otp, created = UserOTP.objects.update_or_create(
         user=user,
         defaults={
             "otp": otp,
-            "otp_attempts": 3,
-            "is_blocked": False,
-            "block_time": None,
             "expires_at": timezone.now() + timedelta(minutes=2),
-            "created_at": timezone.now(),
             "updated_at": timezone.now(),
         },
     )
-    # Save the OTP
     user_otp.save()
-    # Send OTP via email
+
     subject = "OTP Verification"
     message = f"Your OTP is {otp}. It will expire in 2 minutes. Do not share it with anyone."
     send_email(subject, message, [user.email])

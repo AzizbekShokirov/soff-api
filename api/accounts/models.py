@@ -31,12 +31,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class UserOTP(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="otp")
     otp = models.IntegerField()
     otp_attempts = models.IntegerField(default=3)
     is_blocked = models.BooleanField(default=False)
     expires_at = models.DateTimeField()
-    block_time = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
