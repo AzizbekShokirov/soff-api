@@ -1,0 +1,212 @@
+[
+{
+    "model": "categories.productcategory",
+    "pk": 1,
+    "fields": {
+        "name": "Bed",
+        "slug": "bed",
+        "created_at": "2024-10-11T17:50:58.912Z",
+        "updated_at": "2024-10-11T17:50:58.912Z"
+    }
+},
+{
+    "model": "categories.productcategory",
+    "pk": 2,
+    "fields": {
+        "name": "Sofa",
+        "slug": "sofa",
+        "created_at": "2024-10-11T17:51:01.464Z",
+        "updated_at": "2024-10-11T17:51:01.464Z"
+    }
+},
+{
+    "model": "categories.productcategory",
+    "pk": 3,
+    "fields": {
+        "name": "Table",
+        "slug": "table",
+        "created_at": "2024-10-11T17:51:04.440Z",
+        "updated_at": "2024-10-11T17:51:04.440Z"
+    }
+},
+{
+    "model": "categories.productcategory",
+    "pk": 4,
+    "fields": {
+        "name": "Chair",
+        "slug": "chair",
+        "created_at": "2024-10-11T17:51:07.810Z",
+        "updated_at": "2024-10-11T17:51:07.810Z"
+    }
+},
+{
+    "model": "categories.productcategory",
+    "pk": 5,
+    "fields": {
+        "name": "Wardrobe",
+        "slug": "wardrobe",
+        "created_at": "2024-10-11T17:51:10.520Z",
+        "updated_at": "2024-10-11T17:51:10.520Z"
+    }
+},
+{
+    "model": "categories.productcategory",
+    "pk": 6,
+    "fields": {
+        "name": "Shelf",
+        "slug": "shelf",
+        "created_at": "2024-10-11T17:51:12.640Z",
+        "updated_at": "2024-10-11T17:51:12.641Z"
+    }
+},
+{
+    "model": "categories.productcategory",
+    "pk": 7,
+    "fields": {
+        "name": "Lounge chair",
+        "slug": "lounge-chair",
+        "created_at": "2024-10-11T17:51:20.270Z",
+        "updated_at": "2024-10-11T17:51:20.270Z"
+    }
+},
+{
+    "model": "categories.productcategory",
+    "pk": 8,
+    "fields": {
+        "name": "Dining Table",
+        "slug": "dining-table",
+        "created_at": "2024-10-11T17:54:17.232Z",
+        "updated_at": "2024-10-11T17:54:17.232Z"
+    }
+},
+{
+    "model": "categories.productcategory",
+    "pk": 9,
+    "fields": {
+        "name": "Dining Chair",
+        "slug": "dining-chair",
+        "created_at": "2024-10-11T17:54:26.393Z",
+        "updated_at": "2024-10-11T17:54:26.393Z"
+    }
+},
+{
+    "model": "categories.productcategory",
+    "pk": 10,
+    "fields": {
+        "name": "Coffee Table",
+        "slug": "coffee-table",
+        "created_at": "2024-10-11T17:55:13.219Z",
+        "updated_at": "2024-10-11T17:55:13.219Z"
+    }
+},
+{
+    "model": "categories.productcategory",
+    "pk": 11,
+    "fields": {
+        "name": "Bench",
+        "slug": "bench",
+        "created_at": "2024-10-11T17:55:23.106Z",
+        "updated_at": "2024-10-11T17:55:23.106Z"
+    }
+},
+{
+    "model": "categories.productcategory",
+    "pk": 12,
+    "fields": {
+        "name": "Desk",
+        "slug": "desk",
+        "created_at": "2024-10-11T17:55:27.415Z",
+        "updated_at": "2024-10-11T17:55:27.415Z"
+    }
+},
+{
+    "model": "categories.productcategory",
+    "pk": 13,
+    "fields": {
+        "name": "Stool",
+        "slug": "stool",
+        "created_at": "2024-10-11T17:55:32.436Z",
+        "updated_at": "2024-10-11T17:55:32.436Z"
+    }
+},
+{
+    "model": "categories.productcategory",
+    "pk": 14,
+    "fields": {
+        "name": "Side Table",
+        "slug": "side-table",
+        "created_at": "2024-10-11T17:55:45.216Z",
+        "updated_at": "2024-10-11T17:55:45.216Z"
+    }
+},
+{
+    "model": "categories.productcategory",
+    "pk": 15,
+    "fields": {
+        "name": "TV Stand",
+        "slug": "tv-stand",
+        "created_at": "2024-10-11T17:55:56.951Z",
+        "updated_at": "2024-10-11T17:55:56.951Z"
+    }
+},
+{
+    "model": "categories.productcategory",
+    "pk": 16,
+    "fields": {
+        "name": "Shoe Rack",
+        "slug": "shoe-rack",
+        "created_at": "2024-10-11T17:56:11.107Z",
+        "updated_at": "2024-10-11T17:56:11.107Z"
+    }
+},
+{
+    "model": "categories.productcategory",
+    "pk": 17,
+    "fields": {
+        "name": "Chest of Drawers",
+        "slug": "chest-of-drawers",
+        "created_at": "2024-10-11T17:56:22.291Z",
+        "updated_at": "2024-10-11T17:56:22.291Z"
+    }
+},
+{
+    "model": "categories.productcategory",
+    "pk": 18,
+    "fields": {
+        "name": "Bedside Table",
+        "slug": "bedside-table",
+        "created_at": "2024-10-11T17:56:29.323Z",
+        "updated_at": "2024-10-11T17:56:29.323Z"
+    }
+},
+{
+    "model": "categories.productcategory",
+    "pk": 19,
+    "fields": {
+        "name": "Dressing Table",
+        "slug": "dressing-table",
+        "created_at": "2024-10-11T17:56:36.754Z",
+        "updated_at": "2024-10-11T17:56:36.754Z"
+    }
+},
+{
+    "model": "categories.productcategory",
+    "pk": 20,
+    "fields": {
+        "name": "Mirror",
+        "slug": "mirror",
+        "created_at": "2024-10-11T17:56:40.891Z",
+        "updated_at": "2024-10-11T17:56:40.891Z"
+    }
+},
+{
+    "model": "categories.productcategory",
+    "pk": 21,
+    "fields": {
+        "name": "Armchair",
+        "slug": "armchair",
+        "created_at": "2024-10-11T17:57:14.771Z",
+        "updated_at": "2024-10-11T17:57:14.771Z"
+    }
+}
+]

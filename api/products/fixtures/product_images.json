@@ -1,0 +1,26 @@
+[
+{
+    "model": "products.productimage",
+    "pk": 1,
+    "fields": {
+        "product": 1,
+        "image": "images/products/3_rr7ytEV.jpg"
+    }
+},
+{
+    "model": "products.productimage",
+    "pk": 2,
+    "fields": {
+        "product": 1,
+        "image": "images/products/5_yO1Nbll.jpg"
+    }
+},
+{
+    "model": "products.productimage",
+    "pk": 3,
+    "fields": {
+        "product": 1,
+        "image": "images/products/9.jpg"
+    }
+}
+]

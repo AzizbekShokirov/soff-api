@@ -1,0 +1,40 @@
+[
+{
+    "model": "accounts.user",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$870000$nSSuhnVWGwBsZgBsQYx4Cr$7KUp9XFGBoCxixVesDQVLnyoDoh5xaWWuChi6QPkuvs=",
+        "last_login": "2024-11-10T18:23:00.656Z",
+        "email": "admin@soff.tech",
+        "first_name": "",
+        "last_name": "",
+        "profile_picture": "",
+        "phone_number": null,
+        "is_active": true,
+        "is_staff": true,
+        "is_superuser": true,
+        "date_joined": "2024-11-10T18:22:38.638Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "accounts.user",
+    "pk": 19,
+    "fields": {
+        "password": "pbkdf2_sha256$870000$ogy2FvyQKkK6vCa7nAeYl8$qb96JeoBjLzoBJVhVvR5GoRy0WrD1+4ZseYaNQxqlM8=",
+        "last_login": null,
+        "email": "azizbek@example.com",
+        "first_name": "client firstname",
+        "last_name": "client surname",
+        "profile_picture": "",
+        "phone_number": "999-99-99",
+        "is_active": true,
+        "is_staff": false,
+        "is_superuser": false,
+        "date_joined": "2024-11-10T19:36:54.807Z",
+        "groups": [],
+        "user_permissions": []
+    }
+}
+]

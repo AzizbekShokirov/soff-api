@@ -1,0 +1,550 @@
+[
+{
+    "model": "products.product",
+    "pk": 1,
+    "fields": {
+        "title": "Executive chair STRANGER",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "94.50",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/stull",
+        "is_ar": true,
+        "ar_url": "https://github.com/Saidikrom/GLTF/raw/Saidikrom/stull.glb",
+        "slug": "executive-chair-stranger",
+        "images": [
+            "https://images.uzum.uz/cfqt727g49devoa8rrng/original.jpg",
+            "https://images.uzum.uz/cfqt72vhgiov1qicnfp0/original.jpg",
+            "https://images.uzum.uz/cfqt73ng49devoa8rrpg/original.jpg"
+        ]
+    }
+},
+{
+    "model": "products.product",
+    "pk": 2,
+    "fields": {
+        "title": "ROBOT gaming chair black",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "420.92",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/chair",
+        "is_ar": true,
+        "ar_url": "https://github.com/Saidikrom/images/raw/Saidikrom/models/chair.glb",
+        "slug": "robot-gaming-chair-black",
+        "images": [
+            "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/22.jpg"
+        ]
+    }
+},
+{
+    "model": "products.product",
+    "pk": 3,
+    "fields": {
+        "title": "Armchair DUOREST A683 grey",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "172.04",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/egg_chair",
+        "is_ar": true,
+        "ar_url": "https://github.com/Saidikrom/images/raw/Saidikrom/models/egg_chair.glb",
+        "slug": "armchair-duorest-a683-grey",
+        "images": [
+            "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/23.jpg"
+        ]
+    }
+},
+{
+    "model": "products.product",
+    "pk": 4,
+    "fields": {
+        "title": "Executive chair STRANGER (CM-F85A) blue",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "270.67",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/folding_bed",
+        "is_ar": true,
+        "ar_url": "https://github.com/Saidikrom/images/raw/Saidikrom/models/folding_bed.glb",
+        "slug": "executive-chair-stranger-cm-f85a-blue",
+        "images": [
+            "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/24.jpg"
+        ]
+    }
+},
+{
+    "model": "products.product",
+    "pk": 5,
+    "fields": {
+        "title": "Armchair DUOREST A683 green",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "172.04",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/office_chair",
+        "is_ar": false,
+        "ar_url": "https://github.com/Saidikrom/images/raw/Saidikrom/models/office_chair.glb",
+        "slug": "armchair-duorest-a683-green",
+        "images": [
+            "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/5.jpg"
+        ]
+    }
+},
+{
+    "model": "products.product",
+    "pk": 6,
+    "fields": {
+        "title": "Children's armchair MIREI black",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "30.97",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/office_chair_black",
+        "is_ar": true,
+        "ar_url": "https://github.com/Saidikrom/images/raw/Saidikrom/models/office_chair_black.glb",
+        "slug": "childrens-armchair-mirei-black",
+        "images": [
+            "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/6.jpg"
+        ]
+    }
+},
+{
+    "model": "products.product",
+    "pk": 7,
+    "fields": {
+        "title": "Children's armchair MIREI blue",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "30.97",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/office_chair",
+        "is_ar": true,
+        "ar_url": "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/7.jpg",
+        "slug": "childrens-armchair-mirei-blue",
+        "images": [
+            "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/7.jpg"
+        ]
+    }
+},
+{
+    "model": "products.product",
+    "pk": 8,
+    "fields": {
+        "title": "Children's armchair MIREI red",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "30.97",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/office_chair_red",
+        "is_ar": true,
+        "ar_url": "https://github.com/Saidikrom/images/raw/Saidikrom/models/office_chair_red.glb",
+        "slug": "childrens-armchair-mirei-red",
+        "images": [
+            "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/8.jpg"
+        ]
+    }
+},
+{
+    "model": "products.product",
+    "pk": 9,
+    "fields": {
+        "title": "Executive chair MILES A2003 gray",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "387.66",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/office_chair_gray",
+        "is_ar": true,
+        "ar_url": "https://github.com/Saidikrom/images/raw/Saidikrom/models/chai.glb",
+        "slug": "executive-chair-miles-a2003-gray",
+        "images": [
+            "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/21.jpg"
+        ]
+    }
+},
+{
+    "model": "products.product",
+    "pk": 10,
+    "fields": {
+        "title": "Visitor chair DAMARIS (C67) black",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "91.75",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/stull",
+        "is_ar": false,
+        "ar_url": "https://github.com/Saidikrom/GLTF/raw/Saidikrom/stull.glb",
+        "slug": "visitor-chair-damaris-c67-black",
+        "images": [
+            "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/10.jpg"
+        ]
+    }
+},
+{
+    "model": "products.product",
+    "pk": 11,
+    "fields": {
+        "title": "Children's chair KIDDY black",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "42.44",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/stull",
+        "is_ar": false,
+        "ar_url": "https://github.com/Saidikrom/images/raw/Saidikrom/models/folding_bed.glb",
+        "slug": "childrens-chair-kiddy-black",
+        "images": [
+            "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/11.jpg"
+        ]
+    }
+},
+{
+    "model": "products.product",
+    "pk": 12,
+    "fields": {
+        "title": "Children's chair KIDDY pink",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "42.44",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/stull",
+        "is_ar": false,
+        "ar_url": "https://github.com/Saidikrom/GLTF/raw/Saidikrom/stull.glb",
+        "slug": "childrens-chair-kiddy-pink",
+        "images": [
+            "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/12.jpg"
+        ]
+    }
+},
+{
+    "model": "products.product",
+    "pk": 13,
+    "fields": {
+        "title": "Chair for staff CALUM (A3068-1) green",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "137.63",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/stull",
+        "is_ar": false,
+        "ar_url": "https://github.com/Saidikrom/GLTF/raw/Saidikrom/stull.glb",
+        "slug": "chair-for-staff-calum-a3068-1-green",
+        "images": [
+            "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/13.jpg"
+        ]
+    }
+},
+{
+    "model": "products.product",
+    "pk": 14,
+    "fields": {
+        "title": "Children's chair KIDDY blue",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "42.44",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/stull",
+        "is_ar": false,
+        "ar_url": "https://github.com/Saidikrom/GLTF/raw/Saidikrom/stull.glb",
+        "slug": "childrens-chair-kiddy-blue",
+        "images": [
+            "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/14.jpg"
+        ]
+    }
+},
+{
+    "model": "products.product",
+    "pk": 15,
+    "fields": {
+        "title": "Visitor chair SPARK gray",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "135.34",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/stull",
+        "is_ar": false,
+        "ar_url": "https://github.com/Saidikrom/GLTF/raw/Saidikrom/stull.glb",
+        "slug": "visitor-chair-spark-gray",
+        "images": [
+            "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/15.jpg"
+        ]
+    }
+},
+{
+    "model": "products.product",
+    "pk": 16,
+    "fields": {
+        "title": "Children's chair HAPPY green",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "48.17",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/stull",
+        "is_ar": false,
+        "ar_url": "https://github.com/Saidikrom/GLTF/raw/Saidikrom/stull.glb",
+        "slug": "childrens-chair-happy-green",
+        "images": [
+            "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/16.jpg"
+        ]
+    }
+},
+{
+    "model": "products.product",
+    "pk": 17,
+    "fields": {
+        "title": "Executive chair FALTO gray",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "280.99",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/stull",
+        "is_ar": false,
+        "ar_url": "https://github.com/Saidikrom/GLTF/raw/Saidikrom/stull.glb",
+        "slug": "executive-chair-falto-gray",
+        "images": [
+            "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/17.jpg"
+        ]
+    }
+},
+{
+    "model": "products.product",
+    "pk": 18,
+    "fields": {
+        "title": "Children's chair HAPPY blue",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "48.17",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/stull",
+        "is_ar": false,
+        "ar_url": "https://github.com/Saidikrom/GLTF/raw/Saidikrom/stull.glb",
+        "slug": "childrens-chair-happy-blue",
+        "images": [
+            "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/18.jpg"
+        ]
+    }
+},
+{
+    "model": "products.product",
+    "pk": 19,
+    "fields": {
+        "title": "Chair for personnel CALUM (A3068-1) grey",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "137.63",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/stull",
+        "is_ar": false,
+        "ar_url": "https://github.com/Saidikrom/GLTF/raw/Saidikrom/stull.glb",
+        "slug": "chair-for-personnel-calum-a3068-1-grey",
+        "images": [
+            "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/19.jpg"
+        ]
+    }
+},
+{
+    "model": "products.product",
+    "pk": 20,
+    "fields": {
+        "title": "Executive chair FALTO red",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "280.99",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/stull",
+        "is_ar": false,
+        "ar_url": "https://github.com/Saidikrom/GLTF/raw/Saidikrom/stull.glb",
+        "slug": "executive-chair-falto-red",
+        "images": [
+            "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/20.jpg"
+        ]
+    }
+},
+{
+    "model": "products.product",
+    "pk": 21,
+    "fields": {
+        "title": "Executive chair FALTO red (Gaming)",
+        "description": "Berry's minimalistic and laconic armchair will look great in any interior. The arched back of the chair and armrests provide a comfortable sitting position.",
+        "color": "black",
+        "price": "280.99",
+        "manufacturer": "Dafna",
+        "length": "64.00",
+        "width": "58.00",
+        "height": "90.00",
+        "maximum_load": "120.00",
+        "rating": "3.0",
+        "room_category": "office",
+        "product_category": "chair",
+        "material": "Plastic",
+        "ar_model": "https://github.com/Saidikrom/images/raw/Saidikrom/asset%20bundles/gaming",
+        "is_ar": true,
+        "ar_url": "https://github.com/Saidikrom/images/raw/Saidikrom/models/gaming.glb",
+        "slug": "executive-chair-falto-red-gaming",
+        "images": [
+            "https://github.com/Saidikrom/images/raw/Saidikrom/image/furnitures/26.jpg"
+        ]
+    }
+}
+]
