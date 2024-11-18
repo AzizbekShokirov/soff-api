@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import (
+from accounts.views import (
     ConfirmEmailView,
     FavoriteView,
     LoginView,
@@ -37,7 +37,7 @@ urlpatterns = [
         PasswordResetConfirmView.as_view(),
         name="password-reset-confirm",
     ),
-    path("favorites", FavoriteView.as_view(), name="favorites"),
     path("otp/resend", OTPResendView.as_view(), name="otp-resend"),
     path("token/refresh", TokenRefreshView.as_view(), name="token-refresh"),
+    path("favorites", FavoriteView.as_view(), name="favorites"),
 ]

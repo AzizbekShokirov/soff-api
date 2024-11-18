@@ -4,8 +4,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Cart, CartItem
-from .serializers import CartItemSerializer, CartSerializer
+from cart.models import Cart, CartItem
+from cart.serializers import CartItemSerializer, CartSerializer
 
 
 class CartView(APIView):
@@ -21,44 +21,44 @@ class CartView(APIView):
     def post(self, request):
         cart = self.get_cart(request.user)
         serializer = CartItemSerializer(data=request.data, context={"cart": cart})
-        
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CartDetailView(APIView):
-    def get_object(self, item_id, user):
-        try :
-            return CartItem.objects.get(pk=item_id, cart__user=user)
+    def get_cart(self, user):
+        return Cart.objects.get(user=user)
+
+    def get_object_by_slug(self, product_slug, user):
+        try:
+            return CartItem.objects.get(product__slug=product_slug, cart__user=user)
         except CartItem.DoesNotExist:
             raise Http404
-    
-    @swagger_auto_schema(responses={200: CartItemSerializer})
-    def get(self, request, item_id):
-        cart_item = self.get_object(item_id, request.user)
+
+    def get(self, request, product_slug=None):
+        cart_item = self.get_object_by_slug(product_slug, request.user)
         serializer = CartItemSerializer(cart_item)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    @swagger_auto_schema(request_body=CartItemSerializer)
-    def put(self, request, item_id):
-        cart_item = self.get_object(item_id, request.user)
-        quantity_change = request.data.get("quantity")
 
+    @swagger_auto_schema(request_body=CartItemSerializer)
+    def put(self, request, product_slug=None):
+        cart_item = self.get_object_by_slug(product_slug, request.user)
+        quantity_change = request.data.get("quantity")
         if quantity_change is None or quantity_change <= 0:
-            return Response({"error": "Quantity must be greater than zero"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Quantity must be greater than zero"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         cart_item.quantity = quantity_change
         cart_item.save()
-
         serializer = CartItemSerializer(cart_item)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @swagger_auto_schema(responses={204: "Item removed from cart."})
-    def delete(self, request, item_id):
-        cart_item = self.get_object(item_id, request.user)
+    def delete(self, request, product_slug=None):
+        cart_item = self.get_object_by_slug(product_slug, request.user)
         cart_item.delete()
         return Response(
             {"message": "Item removed from cart."}, status=status.HTTP_204_NO_CONTENT

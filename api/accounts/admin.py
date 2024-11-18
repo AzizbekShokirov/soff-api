@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Favorite, User, UserOTP
+from accounts.models import Favorite, User, UserOTP
 
 
 class UserOTPInline(admin.TabularInline):
@@ -21,20 +21,21 @@ class UserAdmin(admin.ModelAdmin):
         "last_name",
         "is_active",
         "is_staff",
-        "date_joined",
-    )
-    search_fields = ("email", "first_name", "last_name", "is_active", "is_staff")
-    list_filter = ("is_active", "is_staff", "date_joined")
-    ordering = (
         "id",
+        "phone_number",
+        "image",
+        "date_joined",
+        "last_login",
+    )
+    search_fields = ("email", "first_name", "last_name")
+    list_filter = ("is_active", "is_staff", "date_joined", "last_login")
+    ordering = (
         "email",
+        "id",
         "first_name",
         "last_name",
-        "is_active",
-        "is_staff",
-        "date_joined",
     )
-    readonly_fields = ("id", "date_joined")
+    readonly_fields = ("id", "date_joined", "last_login")
     inlines = [UserOTPInline, FavoriteInline]
 
 
@@ -45,30 +46,14 @@ class UserOTPAdmin(admin.ModelAdmin):
         "otp",
         "otp_attempts",
         "is_blocked",
-        "expires_at",
         "created_at",
         "updated_at",
-    )
-    search_fields = (
-        "user",
-        "otp",
-        "otp_attempts",
-        "is_blocked",
         "expires_at",
-        "created_at",
-        "updated_at",
     )
+    search_fields = ("user",)
     list_filter = ("otp_attempts", "is_blocked", "expires_at")
-    ordering = (
-        "id",
-        "user",
-        "otp",
-        "otp_attempts",
-        "created_at",
-        "is_blocked",
-        "expires_at",
-    )
-    readonly_fields = ("id", "created_at", "expires_at")
+    ordering = ("user", "otp_attempts")
+    readonly_fields = ("id", "created_at", "expires_at", "updated_at")
 
 
 @admin.register(Favorite)

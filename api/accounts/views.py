@@ -7,9 +7,9 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Favorite, User, UserOTP
-from .serializers import (
-    EmailVerificationSerializer,
+from accounts.models import Favorite, User
+from accounts.serializers import (
+    EmailValidationSerializer,
     FavoriteSerializer,
     LoginSerializer,
     OTPValidationSerializer,
@@ -19,10 +19,7 @@ from .serializers import (
     RefreshTokenSerializer,
     RegisterSerializer,
 )
-from .utils import (
-    send_confirmation_email,
-    send_otp_email,
-)
+from accounts.utils import reset_otp_data, send_confirmation_email, send_otp_email
 
 
 class RegisterView(APIView):
@@ -33,14 +30,6 @@ class RegisterView(APIView):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            user_otp = UserOTP.objects.filter(user=user).first()
-            if user_otp and user_otp.is_max_attempts_reached():
-                return Response(
-                    {
-                        "error": "You have reached the maximum number of OTP attempts. Please try again later."
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
             send_otp_email(user)
             return Response(
                 {
@@ -53,7 +42,6 @@ class RegisterView(APIView):
                 },
                 status=status.HTTP_201_CREATED,
             )
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -65,18 +53,9 @@ class ConfirmEmailView(APIView):
         serializer = OTPValidationSerializer(data=request.data)
         if serializer.is_valid():
             user = User.objects.get(email=serializer.validated_data["email"])
-            user_otp = UserOTP.objects.get(
-                user__email=user.email, otp=serializer.validated_data["otp"]
-            )
-            # If OTP is valid, reset attempts and unblock the user if necessary
-            if user_otp.otp == serializer.validated_data["otp"]:
-                user_otp.otp_attempts = 3
-                user_otp.is_blocked = False
-                user_otp.save()
-                # Activate the user
-                user.is_active = True
-                user.save()
-
+            user.is_active = True
+            user.save()
+            reset_otp_data(user)
             send_confirmation_email(request, user, purpose="account_confirmation")
             return Response(
                 {"message": "Email confirmed successfully. You can now log in."},
@@ -93,7 +72,6 @@ class LoginView(APIView):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.validated_data["user"]
-
             update_last_login(None, user)
             refresh_token = RefreshToken.for_user(user)
             tokens = {
@@ -132,20 +110,11 @@ class LogoutView(APIView):
 class PasswordResetView(APIView):
     permission_classes = [AllowAny]
 
-    @swagger_auto_schema(request_body=EmailVerificationSerializer)
+    @swagger_auto_schema(request_body=EmailValidationSerializer)
     def post(self, request):
-        serializer = EmailVerificationSerializer(data=request.data)
+        serializer = EmailValidationSerializer(data=request.data)
         if serializer.is_valid():
             user = User.objects.get(email=serializer.validated_data["email"])
-            user_otp = UserOTP.objects.filter(user=user).first()
-
-            if user_otp and user_otp.is_max_attempts_reached():
-                return Response(
-                    {
-                        "error": "You have reached the maximum number of attempts. Please try again later."
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
             send_otp_email(user)
             return Response(
                 {"message": "Password reset OTP has been sent to your email."},
@@ -159,47 +128,30 @@ class PasswordResetConfirmView(APIView):
 
     @swagger_auto_schema(request_body=PasswordResetConfirmSerializer)
     def post(self, request):
-        serializer = PasswordResetConfirmSerializer(data=request.data, context={"request": request})
+        serializer = PasswordResetConfirmSerializer(
+            data=request.data, context={"request": request}
+        )
         if serializer.is_valid():
-            email = request.data.get("email")
-            user = User.objects.get(email=email)
-
-            # Optionally reset the user's OTP data (e.g., set attempts to 0, or delete expired OTPs)
-            user_otp = UserOTP.objects.get(user=user)
-            user_otp.otp_attempts = 3
-            user_otp.is_blocked = False
-            user_otp.save()
-
-            # Save the new password
-            user.set_password(serializer.validated_data["new_password"])
-            user.save()
-
-            # Send a confirmation email
+            user = serializer.save()
+            reset_otp_data(user)
             send_confirmation_email(request, user, purpose="password_reset")
-
             return Response(
-                {"success": "Password has been reset successfully."},
+                {
+                    "success": "Password has been reset successfully. Please log in with your new password."
+                },
                 status=status.HTTP_200_OK,
             )
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class OTPResendView(APIView):
     permission_classes = [AllowAny]
 
-    @swagger_auto_schema(serializer_class=EmailVerificationSerializer)
+    @swagger_auto_schema(serializer_class=EmailValidationSerializer)
     def post(self, request):
-        serializer = EmailVerificationSerializer(data=request.data)
+        serializer = EmailValidationSerializer(data=request.data)
         if serializer.is_valid():
             user = User.objects.get(email=serializer.validated_data["email"])
-            if user.otp and user.otp.is_max_attempts_reached():
-                return Response(
-                    {
-                        "error": "You have reached the maximum number of attempts. Please try again later."
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
             send_otp_email(user)
             return Response(
                 {"message": "OTP has been resent to your email."},
@@ -222,8 +174,8 @@ class TokenRefreshView(APIView):
                 new_access_token = token.access_token
                 return Response(
                     {
-                        "access": str(new_access_token),
                         "refresh": str(token),
+                        "access": str(new_access_token),
                     },
                     status=status.HTTP_200_OK,
                 )
@@ -232,7 +184,6 @@ class TokenRefreshView(APIView):
                     {"error": "Invalid refresh token"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -243,19 +194,17 @@ class PasswordChangeView(APIView):
             data=request.data, context={"request": request}
         )
         if serializer.is_valid():
-            serializer.save()
+            user = serializer.save()
+            send_confirmation_email(request, user, purpose="password_change")
             return Response(status=status.HTTP_204_NO_CONTENT)
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProfileView(APIView):
     def get(self, request):
         user = request.user
-        serializer = ProfileSerializer(user, data=request.data)
-        if serializer.is_valid():
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = ProfileSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(request_body=ProfileSerializer)
     def put(self, request):
@@ -263,7 +212,7 @@ class ProfileView(APIView):
         serializer = ProfileSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

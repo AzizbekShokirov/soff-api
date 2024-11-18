@@ -1,15 +1,15 @@
 from django.urls import path
 
-from .views import (
-    ProductView,
+from products.views import (
     ProductDetailView,
     ProductLikeView,
-    ProductSearchView
+    ProductSearchView,
+    ProductView,
 )
 
 urlpatterns = [
-    path('', ProductView.as_view(), name="products-list"),
-    path('<int:product_id>', ProductDetailView.as_view(), name="product-detail"),
-    path('like/<int:product_id>', ProductLikeView.as_view(), name='product-like'),
-    path('search/', ProductSearchView.as_view(), name='search-products'),
+    path("", ProductView.as_view(), name="products-list"),
+    path("<slug:product_slug>", ProductDetailView.as_view(), name="product-detail"),
+    path("like/<slug:product_slug>", ProductLikeView.as_view(), name="product-like"),
+    path("search/", ProductSearchView.as_view(), name="search-products"),
 ]

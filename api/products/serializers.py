@@ -1,19 +1,17 @@
 from decimal import Decimal
 
-from categories.models import ProductCategory, RoomCategory
-from categories.serializers import ProductCategorySerializer, RoomCategorySerializer
-from manufacturers.models import Manufacturer
-from manufacturers.serializers import ManufacturerSerializer
 from django.core.validators import MaxValueValidator, MinValueValidator
 from rest_framework import serializers
 
-from .models import Product, ProductImage
+from categories.models import ProductCategory, RoomCategory
+from manufacturers.models import Manufacturer
+from products.models import Product, ProductImage
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImage
-        fields = ["id", "image"]
+        fields = ["image"]
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -66,9 +64,15 @@ class ProductSerializer(serializers.ModelSerializer):
             MinValueValidator(Decimal("0.0")),
         ],
     )
-    room_category = RoomCategorySerializer()
-    product_category = ProductCategorySerializer()
-    manufacturer = ManufacturerSerializer()
+    room_category = serializers.SlugRelatedField(
+        slug_field="slug", queryset=RoomCategory.objects.all()
+    )
+    product_category = serializers.SlugRelatedField(
+        slug_field="slug", queryset=ProductCategory.objects.all()
+    )
+    manufacturer = serializers.SlugRelatedField(
+        slug_field="slug", queryset=Manufacturer.objects.all()
+    )
     images = ProductImageSerializer(many=True)
 
     class Meta:
@@ -81,22 +85,16 @@ class ProductSerializer(serializers.ModelSerializer):
         product_category_data = validated_data.pop("product_category")
         manufacturer_data = validated_data.pop("manufacturer")
 
-        room_category = RoomCategory.objects.get(
-            **room_category_data
-        )
+        room_category = RoomCategory.objects.get(**room_category_data)
 
-        product_category = ProductCategory.objects.get(
-            **product_category_data
-        )
-        
-        manufacturer = Manufacturer.objects.get(
-            **manufacturer_data
-        )
+        product_category = ProductCategory.objects.get(**product_category_data)
+
+        manufacturer = Manufacturer.objects.get(**manufacturer_data)
 
         product = Product.objects.create(
             room_category=room_category,
             product_category=product_category,
-            manufacturer=manufacturer
+            manufacturer=manufacturer,
             **validated_data,
         )
 
@@ -129,7 +127,7 @@ class ProductSerializer(serializers.ModelSerializer):
                 id=instance.manufacturer.id, defaults=manufacturer_data
             )
             instance.manufacturer = manufacturer
-        
+
         # Update other fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)

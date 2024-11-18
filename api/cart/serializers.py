@@ -1,23 +1,27 @@
 from rest_framework import serializers
 
-from .models import Cart, CartItem, Product
+from cart.models import Cart, CartItem, Product
+
 
 class CartProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ["id", "title", "price"]
+        fields = ["slug", "title", "price"]
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    product = CartProductSerializer(read_only=True)  # This will only show the product in responses, not in the request
-    product_id = serializers.IntegerField(write_only=True)
+    product = CartProductSerializer(
+        read_only=True
+    )  # This will only show the product in responses, not in the request
+    product_slug = serializers.SlugField(write_only=True)
 
     class Meta:
         model = CartItem
-        fields = ["id", "product", "product_id", "quantity"]
+        fields = ["id", "product", "product_slug", "quantity"]
 
     def create(self, validated_data):
-        product = Product.objects.get(id=validated_data.pop("product_id"))
+        product_slug = validated_data.pop("product_slug")
+        product = Product.objects.get(slug=product_slug)
         cart = self.context["cart"]
 
         cart_item, created = CartItem.objects.get_or_create(
@@ -33,6 +37,10 @@ class CartItemSerializer(serializers.ModelSerializer):
         return cart_item
 
     def update(self, instance, validated_data):
+        if "product_slug" in validated_data:
+            product_slug = validated_data.pop("product_slug")
+            instance.product = Product.objects.get(slug=product_slug)
+
         instance.quantity = validated_data.get("quantity", instance.quantity)
         instance.save()
         return instance

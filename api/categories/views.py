@@ -1,16 +1,17 @@
+from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import ProductCategory, RoomCategory
-from .serializers import ProductCategorySerializer, RoomCategorySerializer
+from categories.models import ProductCategory, RoomCategory
+from categories.serializers import ProductCategorySerializer, RoomCategorySerializer
 
 
 class RoomCategoryView(APIView):
     def get(self, request):
-        categories = RoomCategory.objects.all()
-        serializer = RoomCategorySerializer(categories, many=True)
+        room_categories = RoomCategory.objects.all()
+        serializer = RoomCategorySerializer(room_categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(request_body=RoomCategorySerializer)
@@ -23,38 +24,35 @@ class RoomCategoryView(APIView):
 
 
 class RoomCategoryDetailView(APIView):
-    def get_object(self, category_id):
-        try:
-            return RoomCategory.objects.get(id=category_id)
-        except RoomCategory.DoesNotExist:
-            return Response(
-                {"detail": "Room category not found."}, status=status.HTTP_404_NOT_FOUND
-            )
-
-    def get(self, request, category_id):
-        category = self.get_object(category_id)
-        serializer = RoomCategorySerializer(category)
+    def get(self, request, slug):
+        room_category = get_object_or_404(RoomCategory, slug=slug)
+        serializer = RoomCategorySerializer(room_category)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(request_body=RoomCategorySerializer)
-    def put(self, request, category_id):
-        category = self.get_object(category_id)
-        serializer = RoomCategorySerializer(category, data=request.data)
+    def put(self, request, slug):
+        room_category = get_object_or_404(RoomCategory, slug=slug)
+        serializer = RoomCategorySerializer(
+            room_category, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, category_id):
-        category = self.get_object(category_id)
-        category.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def delete(self, request, slug):
+        room_category = get_object_or_404(RoomCategory, slug=slug)
+        room_category.delete()
+        return Response(
+            {"message": "Room category deleted successfully."},
+            status=status.HTTP_204_NO_CONTENT,
+        )
 
 
 class ProductCategoryView(APIView):
     def get(self, request):
-        categories = ProductCategory.objects.all()
-        serializer = ProductCategorySerializer(categories, many=True)
+        product_categories = ProductCategory.objects.all()
+        serializer = ProductCategorySerializer(product_categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(request_body=ProductCategorySerializer)
@@ -67,30 +65,26 @@ class ProductCategoryView(APIView):
 
 
 class ProductCategoryDetailView(APIView):
-    def get_object(self, category_id):
-        try:
-            return ProductCategory.objects.get(id=category_id)
-        except ProductCategory.DoesNotExist:
-            return Response(
-                {"detail": "Product category not found."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-    def get(self, request, category_id):
-        category = self.get_object(category_id)
-        serializer = ProductCategorySerializer(category)
+    def get(self, request, slug):
+        product_category = get_object_or_404(ProductCategory, slug=slug)
+        serializer = ProductCategorySerializer(product_category)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(request_body=ProductCategorySerializer)
-    def put(self, request, category_id):
-        category = self.get_object(category_id)
-        serializer = ProductCategorySerializer(category, data=request.data)
+    def put(self, request, slug):
+        product_category = get_object_or_404(ProductCategory, slug=slug)
+        serializer = ProductCategorySerializer(
+            product_category, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, category_id):
-        category = self.get_object(category_id)
-        category.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def delete(self, request, slug):
+        product_category = get_object_or_404(ProductCategory, slug=slug)
+        product_category.delete()
+        return Response(
+            {"message": "Product category deleted successfully."},
+            status=status.HTTP_204_NO_CONTENT,
+        )

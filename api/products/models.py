@@ -1,6 +1,7 @@
-from categories.models import ProductCategory, RoomCategory
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
+from categories.models import ProductCategory, RoomCategory
 from manufacturers.models import Manufacturer
 
 
@@ -36,11 +37,10 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    
     class Meta:
         verbose_name = "Product"
         verbose_name_plural = "Products"
-    
+
     def __str__(self):
         return self.title
 
@@ -54,6 +54,6 @@ class ProductImage(models.Model):
     class Meta:
         verbose_name = "Product Image"
         verbose_name_plural = "Product Images"
-    
+
     def __str__(self):
         return f"{self.product.title} image with ID: {self.pk}"

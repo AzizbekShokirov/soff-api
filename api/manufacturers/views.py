@@ -1,16 +1,17 @@
+from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Manufacturer
-from .serializers import ManufacturerSerializer
+from manufacturers.models import Manufacturer
+from manufacturers.serializers import ManufacturerSerializer
 
 
 class ManufacturerView(APIView):
     def get(self, request):
-        categories = Manufacturer.objects.all()
-        serializer = ManufacturerSerializer(categories, many=True)
+        room_categories = Manufacturer.objects.all()
+        serializer = ManufacturerSerializer(room_categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(request_body=ManufacturerSerializer)
@@ -23,29 +24,26 @@ class ManufacturerView(APIView):
 
 
 class ManufacturerDetailView(APIView):
-    def get_object(self, manufacturer_id):
-        try:
-            return Manufacturer.objects.get(id=manufacturer_id)
-        except Manufacturer.DoesNotExist:
-            return Response(
-                {"detail": "Manufacturer not found."}, status=status.HTTP_404_NOT_FOUND
-            )
-
-    def get(self, request, manufactuer_id):
-        category = self.get_object(id=manufactuer_id)
-        serializer = ManufacturerSerializer(category)
+    def get(self, request, slug):
+        room_category = get_object_or_404(Manufacturer, slug=slug)
+        serializer = ManufacturerSerializer(room_category)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(request_body=ManufacturerSerializer)
-    def put(self, request, manufactuer_id):
-        category = self.get_object(id=manufactuer_id)
-        serializer = ManufacturerSerializer(category, data=request.data)
+    def put(self, request, slug):
+        room_category = get_object_or_404(Manufacturer, slug=slug)
+        serializer = ManufacturerSerializer(
+            room_category, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, manufactuer_id):
-        category = self.get_object(id=manufactuer_id)
-        category.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def delete(self, request, slug):
+        room_category = get_object_or_404(Manufacturer, slug=slug)
+        room_category.delete()
+        return Response(
+            {"message": "Manufacturer deleted successfully."},
+            status=status.HTTP_204_NO_CONTENT,
+        )

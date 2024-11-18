@@ -1,5 +1,6 @@
-from accounts.models import User
 from django.db import models
+
+from accounts.models import User
 from products.models import Product
 
 
@@ -9,7 +10,7 @@ class Cart(models.Model):
     class Meta:
         verbose_name = "Cart"
         verbose_name_plural = "Carts"
-    
+
     def total_cost(self):
         return sum(item.total_price() for item in self.cart_items.all())
 
@@ -27,7 +28,7 @@ class CartItem(models.Model):
     class Meta:
         verbose_name = "Cart Item"
         verbose_name_plural = "Cart Items"
-    
+
     def total_price(self):
         return self.quantity * self.product.price
 

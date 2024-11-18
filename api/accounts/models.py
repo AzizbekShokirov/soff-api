@@ -1,16 +1,16 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from django.utils import timezone
-from products.models import Product
 
-from .managers import CustomUserManager
+from accounts.managers import CustomUserManager
+from products.models import Product
 
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
-    profile_picture = models.ImageField(upload_to="images/users", blank=True)
+    image = models.ImageField(upload_to="images/users", blank=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -38,10 +38,10 @@ class UserOTP(models.Model):
     expires_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     def is_expired(self):
         return timezone.now() > self.expires_at
-    
+
     def is_max_attempts_reached(self):
         return self.otp_attempts == 0
 
