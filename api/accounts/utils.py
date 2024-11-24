@@ -103,7 +103,7 @@ def send_otp_email(user):
         user=user,
         defaults={
             "otp": otp,
-            "expires_at": timezone.now() + timedelta(minutes=2),
+            "expires_at": timezone.now() + timedelta(minutes=3),
             "updated_at": timezone.now(),
         },
     )
@@ -111,7 +111,7 @@ def send_otp_email(user):
 
     subject = "OTP Verification"
     message = (
-        f"Your OTP is {otp}. It will expire in 2 minutes. Do not share it with anyone."
+        f"Your OTP is {otp}. It will expire in 3 minutes. Do not share it with anyone."
     )
     send_email(subject, message, [user.email])
     return otp
