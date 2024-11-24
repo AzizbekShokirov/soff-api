@@ -147,7 +147,7 @@ class PasswordResetConfirmView(APIView):
 class OTPResendView(APIView):
     permission_classes = [AllowAny]
 
-    @swagger_auto_schema(serializer_class=EmailValidationSerializer)
+    @swagger_auto_schema(request_body=EmailValidationSerializer)
     def post(self, request):
         serializer = EmailValidationSerializer(data=request.data)
         if serializer.is_valid():
