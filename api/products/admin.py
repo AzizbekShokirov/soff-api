@@ -15,21 +15,20 @@ class ProductAdmin(admin.ModelAdmin):
         "price",
         "room_category",
         "product_category",
+        "manufacturer",
         "slug",
         "id",
         "created_at",
         "updated_at",
     )
-    search_fields = ["title", "room_category", "product_category", "slug"]
-    list_filter = ["room_category", "product_category"]
+    search_fields = ["title", "room_category", "product_category", "manufacturer"]
+    list_filter = ["manufacturer", "room_category", "product_category"]
     prepopulated_fields = {"slug": ("title",)}
-    ordering = ["id", "title", "price", "room_category", "product_category", "slug"]
     inlines = [ProductImageInline]
 
 
-@admin.register(ProductImage)
-class ProductImageAdmin(admin.ModelAdmin):
-    list_display = ["image", "product", "id"]
-    search_fields = ["product"]
-    list_filter = ["product"]
-    ordering = ["product", "image", "id"]
+# @admin.register(ProductImage)
+# class ProductImageAdmin(admin.ModelAdmin):
+#     list_display = ["image", "product", "id"]
+#     search_fields = ["product"]
+#     list_filter = ["product"]
