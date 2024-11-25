@@ -7,7 +7,7 @@ from categories.models import ProductCategory, RoomCategory
 class RoomCategoryAdmin(admin.ModelAdmin):
     list_display = ("name", "slug", "image", "id", "created_at", "updated_at")
     search_fields = ("name",)
-    ordering = ("name", "id")
+    list_filter = ("created_at", "updated_at")
     prepopulated_fields = {"slug": ("name",)}
 
 
@@ -15,5 +15,5 @@ class RoomCategoryAdmin(admin.ModelAdmin):
 class ProductCategoryAdmin(admin.ModelAdmin):
     list_display = ("name", "slug", "image", "id", "created_at", "updated_at")
     search_fields = ("name",)
-    ordering = ("name", "id")
+    list_filter = ("created_at", "updated_at")
     prepopulated_fields = {"slug": ("name",)}

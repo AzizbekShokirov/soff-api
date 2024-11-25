@@ -11,18 +11,19 @@ class CartItemInline(admin.TabularInline):
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
     list_display = ("user", "total_cost", "id")
+    search_fields = ("user__email",)
     inlines = [CartItemInline]
 
 
-@admin.register(CartItem)
-class CartItemAdmin(admin.ModelAdmin):
-    list_display = (
-        "cart",
-        "product",
-        "quantity",
-        "total_price",
-        "id",
-        "created_at",
-        "updated_at",
-    )
-    search_fields = ("cart__user__email", "product__title")
+# @admin.register(CartItem)
+# class CartItemAdmin(admin.ModelAdmin):
+#     list_display = (
+#         "cart",
+#         "product",
+#         "quantity",
+#         "total_price",
+#         "id",
+#         "created_at",
+#         "updated_at",
+#     )
+#     search_fields = ("cart__user__email", "product__title")
