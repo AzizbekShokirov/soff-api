@@ -3,6 +3,7 @@ from django.urls import path
 from accounts.views import (
     ConfirmEmailView,
     FavoriteView,
+    # FavoriteDetailView,
     LoginView,
     LogoutView,
     OTPResendView,
@@ -40,4 +41,5 @@ urlpatterns = [
     path("otp/resend", OTPResendView.as_view(), name="otp-resend"),
     path("token/refresh", TokenRefreshView.as_view(), name="token-refresh"),
     path("favorites", FavoriteView.as_view(), name="favorites"),
+    # path("favorites/<slug:product_slug>", FavoriteDetailView.as_view(), name="favorites-detail"),
 ]

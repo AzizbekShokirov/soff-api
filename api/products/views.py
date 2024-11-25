@@ -7,12 +7,81 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from accounts.models import Favorite
 from products.models import Product
 from products.serializers import ProductSerializer
 
 
 class ProductView(APIView):
+    @swagger_auto_schema(responses={200: ProductSerializer(many=True)})
+    def get(self, request):
+        queryset = Product.objects.all().order_by("title")
+        paginator = PageNumberPagination()
+        paginated_queryset = paginator.paginate_queryset(queryset, request)
+        serializer = ProductSerializer(paginated_queryset, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+    @swagger_auto_schema(
+        request_body=ProductSerializer,
+        responses={201: ProductSerializer()},
+    )
+    def post(self, request):
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProductDetailView(APIView):
+    def get_object(self, product_slug):
+        try:
+            return Product.objects.get(slug=product_slug)
+        except Product.DoesNotExist:
+            raise Http404
+
+    @swagger_auto_schema(responses={200: ProductSerializer()})
+    def get(self, request, product_slug):
+        try:
+            product = self.get_object(product_slug)
+            serializer = ProductSerializer(product)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Product.DoesNotExist:
+            return Response(
+                {"detail": "No Product matches the given query."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+    @swagger_auto_schema(
+        request_body=ProductSerializer, responses={200: ProductSerializer()}
+    )
+    def put(self, request, product_slug):
+        try:
+            product = self.get_object(product_slug)
+            serializer = ProductSerializer(product, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Http404:
+            return Response(
+                {"detail": "No Product matches the given query."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+    @swagger_auto_schema(responses={204: "Product deleted."})
+    def delete(self, request, product_slug):
+        try:
+            product = self.get_object(product_slug)
+            product.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Http404:
+            return Response(
+                {"detail": "No Product matches the given query."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+
+class ProductFilterView(APIView):
     @swagger_auto_schema(
         operation_description="Get a list of products with pagination",
         manual_parameters=[
@@ -99,93 +168,6 @@ class ProductView(APIView):
 
         return paginator.get_paginated_response(serializer.data)
 
-    @swagger_auto_schema(
-        request_body=ProductSerializer,
-        responses={201: ProductSerializer()},
-    )
-    def post(self, request):
-        serializer = ProductSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class ProductDetailView(APIView):
-    def get_object(self, product_slug):
-        try:
-            return Product.objects.get(slug=product_slug)
-        except Product.DoesNotExist:
-            raise Http404
-
-    @swagger_auto_schema(responses={200: ProductSerializer()})
-    def get(self, request, product_slug):
-        try:
-            product = self.get_object(product_slug)
-            serializer = ProductSerializer(product)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Product.DoesNotExist:
-            return Response(
-                {"detail": "No Product matches the given query."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-    @swagger_auto_schema(
-        request_body=ProductSerializer, responses={200: ProductSerializer()}
-    )
-    def put(self, request, product_slug):
-        try:
-            product = self.get_object(product_slug)
-            serializer = ProductSerializer(product, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Http404:
-            return Response(
-                {"detail": "No Product matches the given query."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-    @swagger_auto_schema(responses={204: "Product deleted."})
-    def delete(self, request, product_slug):
-        try:
-            product = self.get_object(product_slug)
-            product.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except Http404:
-            return Response(
-                {"detail": "No Product matches the given query."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-
-class ProductLikeView(APIView):
-    @swagger_auto_schema(
-        responses={200: "Product liked and added to favorites."},
-    )
-    def post(self, request, product_slug):
-        try:
-            product = Product.objects.get(slug=product_slug)
-        except Product.DoesNotExist:
-            return Response(
-                {"detail": "Product not found."}, status=status.HTTP_404_NOT_FOUND
-            )
-        favorite, created = Favorite.objects.get_or_create(
-            user=request.user, product=product
-        )
-        favorite.liked = not favorite.liked  # Toggle the liked status
-        favorite.save()
-
-        if favorite.liked:
-            message = "Product liked."
-            status_code = status.HTTP_201_CREATED
-        else:
-            message = "Product unliked."
-            status_code = status.HTTP_200_OK
-
-        return Response({"message": message}, status=status_code)
-
 
 class ProductSearchView(APIView):
     @swagger_auto_schema(
@@ -206,9 +188,7 @@ class ProductSearchView(APIView):
                 {"detail": "Query parameter 'q' is required."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
         search_query = SearchQuery(query)
-
         # Annotate products with search and rank fields
         products = (
             Product.objects.annotate(
@@ -226,15 +206,12 @@ class ProductSearchView(APIView):
             .filter(search=search_query)
             .order_by("-rank")
         )
-
         # Paginate the results
         paginator = PageNumberPagination()
         paginated_products = paginator.paginate_queryset(products, request)
-
         if paginated_products:
             serializer = ProductSerializer(paginated_products, many=True)
             return paginator.get_paginated_response(serializer.data)
-
         return Response(
             {"detail": "No products found"}, status=status.HTTP_404_NOT_FOUND
         )

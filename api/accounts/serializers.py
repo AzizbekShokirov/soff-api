@@ -5,8 +5,8 @@ from rest_framework import serializers
 
 from accounts.models import Favorite, User
 from accounts.utils import validate_otp, validate_password_data
+from products.models import Product
 from products.serializers import ProductSerializer
-
 
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
@@ -186,6 +186,16 @@ class ProfileSerializer(serializers.ModelSerializer):
         if "image" in validated_data and instance.image:
             instance.image.delete()
         return super().update(instance, validated_data)
+
+
+class FavoriteSlugSerializer(serializers.ModelSerializer):
+    product = serializers.SlugRelatedField(
+        slug_field="slug", queryset=Product.objects.all()
+    )
+
+    class Meta:
+        model = Favorite
+        fields = ["product"]
 
 
 class FavoriteSerializer(serializers.ModelSerializer):

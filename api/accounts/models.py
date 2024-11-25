@@ -63,7 +63,7 @@ class Favorite(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ("user", "product")
+        unique_together = ("user", "product") # User can like a product only once
         verbose_name = "Favorite"
         verbose_name_plural = "Favorites"
 

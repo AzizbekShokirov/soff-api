@@ -15,6 +15,10 @@ class ProductImageSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(max_length=255)
+    description = serializers.CharField(max_length=1000)
+    color = serializers.CharField(max_length=255)
+    material = serializers.CharField(max_length=255)
     price = serializers.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -74,10 +78,14 @@ class ProductSerializer(serializers.ModelSerializer):
         slug_field="slug", queryset=Manufacturer.objects.all()
     )
     images = ProductImageSerializer(many=True)
+    is_ar = serializers.BooleanField()
+    ar_model = serializers.URLField()
+    ar_url = serializers.URLField()
+    
 
     class Meta:
         model = Product
-        fields = "__all__"
+        exclude = ["id"]
 
     def create(self, validated_data):
         images_data = validated_data.pop("images")

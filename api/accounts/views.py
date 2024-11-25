@@ -1,5 +1,7 @@
 from django.contrib.auth.models import update_last_login
+from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
+from products.models import Product
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -11,6 +13,7 @@ from accounts.models import Favorite, User
 from accounts.serializers import (
     EmailValidationSerializer,
     FavoriteSerializer,
+    FavoriteSlugSerializer,
     LoginSerializer,
     OTPValidationSerializer,
     PasswordChangeSerializer,
@@ -219,24 +222,49 @@ class ProfileView(APIView):
 class FavoriteView(APIView):
     def get(self, request):
         favorites = Favorite.objects.filter(
-            user=request.user, liked=True
+            user=request.user
         ).select_related("product")
         serializer = FavoriteSerializer(favorites, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @swagger_auto_schema(request_body=FavoriteSerializer)
-    def post(self, request, product_id):
-        favorite, created = Favorite.objects.get_or_create(
-            user=request.user, product_id=product_id
-        )
+    @swagger_auto_schema(request_body=FavoriteSlugSerializer)
+    def post(self, request):
+        product = get_object_or_404(Product, slug=request.data["product_slug"])
+        favorite = Favorite.objects.get_or_create(user=request.user, product=product)[0]
         favorite.liked = not favorite.liked  # Toggle liked status
         favorite.save()
-        return Response({"message": "Favorite toggled."}, status=status.HTTP_200_OK)
+        message = "Product liked." if favorite.liked else "Product unliked."
+        return Response({"message": message}, status=status.HTTP_200_OK)
 
-    @swagger_auto_schema(responses={200: "All favorites unliked."})
+    @swagger_auto_schema(responses={200: "All favorites deleted."})
     def delete(self, request):
-        favorites = Favorite.objects.filter(user=request.user, liked=True)
-        favorites.update(liked=False)
+        favorites = Favorite.objects.filter(user=request.user)
+        favorites.delete()
         return Response(
-            {"message": "All favorites unliked."}, status=status.HTTP_200_OK
+            {"message": "All favorites deleted."}, status=status.HTTP_200_OK
         )
+
+
+# class FavoriteDetailView(APIView):
+#     def get(self, request, product_slug):
+#         product = get_object_or_404(Product, slug=product_slug)
+#         try:
+#             favorite = Favorite.objects.get(user=request.user, product=product)
+#             serializer = FavoriteSerializer(favorite)
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+#         except Favorite.DoesNotExist:
+#             return Response(
+#                 {"error": "Favorite does not exist."}, status=status.HTTP_404_NOT_FOUND
+#             )
+
+#     @swagger_auto_schema(responses={200: "Favorite deleted."})
+#     def delete(self, request, product_slug):
+#         product = get_object_or_404(Product, slug=product_slug)
+#         try:
+#             favorite = Favorite.objects.get(user=request.user, product=product)
+#             favorite.delete()
+#             return Response({"message": "Favorite deleted."},status=status.HTTP_200_OK)
+#         except Favorite.DoesNotExist:
+#             return Response(
+#                 {"error": "Favorite does not exist."}, status=status.HTTP_404_NOT_FOUND
+#             )
