@@ -194,23 +194,33 @@ class ProfileView(APIView):
 
 class FavoriteView(APIView):
     def get(self, request):
-        favorites = Favorite.objects.filter(user=request.user).select_related("product")
+        favorites = Favorite.objects.filter(user=request.user, liked=True).select_related("product")
         serializer = FavoriteSerializer(favorites, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(request_body=FavoriteSlugSerializer)
     def post(self, request):
         product = get_object_or_404(Product, slug=request.data["product_slug"])
-        favorite = Favorite.objects.get_or_create(user=request.user, product=product)[0]
-        favorite.liked = not favorite.liked  # Toggle liked status
-        favorite.save()
-        message = "Product liked." if favorite.liked else "Product unliked."
-        return Response({"message": message}, status=status.HTTP_200_OK)
+        try:
+            favorite = Favorite.objects.get_or_create(user=request.user, product=product)[0]
+            if not favorite.liked:
+                favorite.liked = True
+                favorite.save()
+                return Response({"message": "Favorite added."}, status=status.HTTP_200_OK)
+            return Response(
+                {"message": "Favorite already added."}, status=status.HTTP_200_OK
+            )
+        except Favorite.DoesNotExist:
+            return Response(
+                {"error": "Favorite does not exist."}, status=status.HTTP_404_NOT_FOUND
+            )
 
     @swagger_auto_schema(responses={200: "All favorites deleted."})
     def delete(self, request):
-        favorites = Favorite.objects.filter(user=request.user)
-        favorites.delete()
+        favorites = Favorite.objects.filter(user=request.user).select_related("product")
+        for favorite in favorites:
+            favorite.liked = False
+            favorite.save()
         return Response(
             {"message": "All favorites deleted."}, status=status.HTTP_200_OK
         )
@@ -233,8 +243,13 @@ class FavoriteDetailView(APIView):
         product = get_object_or_404(Product, slug=product_slug)
         try:
             favorite = Favorite.objects.get(user=request.user, product=product)
-            favorite.delete()
-            return Response({"message": "Favorite deleted."}, status=status.HTTP_200_OK)
+            if favorite.liked:
+                favorite.liked = False
+                favorite.save()
+                return Response({"message": "Favorite deleted."}, status=status.HTTP_200_OK)
+            return Response(
+                {"message": "Favorite already deleted."}, status=status.HTTP_200_OK
+            )
         except Favorite.DoesNotExist:
             return Response(
                 {"error": "Favorite does not exist."}, status=status.HTTP_404_NOT_FOUND
