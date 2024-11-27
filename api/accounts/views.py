@@ -100,7 +100,7 @@ class LogoutView(APIView):
                 token.blacklist()
 
                 return Response(
-                    {"message": "Logout successful"},
+                    {"message": "Logout successful."},
                     status=status.HTTP_205_RESET_CONTENT,
                 )
             except TokenError:
@@ -163,33 +163,6 @@ class OTPResendView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class TokenRefreshView(APIView):
-    permission_classes = [AllowAny]
-
-    @swagger_auto_schema(request_body=RefreshTokenSerializer)
-    def post(self, request):
-        serializer = RefreshTokenSerializer(data=request.data)
-        if serializer.is_valid():
-            try:
-                refresh_token = serializer.validated_data["refresh"]
-                # Decode the refresh token and generate a new access token
-                token = RefreshToken(refresh_token)
-                new_access_token = token.access_token
-                return Response(
-                    {
-                        "refresh": str(token),
-                        "access": str(new_access_token),
-                    },
-                    status=status.HTTP_200_OK,
-                )
-            except TokenError:
-                return Response(
-                    {"error": "Invalid refresh token"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 class PasswordChangeView(APIView):
     @swagger_auto_schema(request_body=PasswordChangeSerializer)
     def post(self, request):
@@ -221,9 +194,7 @@ class ProfileView(APIView):
 
 class FavoriteView(APIView):
     def get(self, request):
-        favorites = Favorite.objects.filter(
-            user=request.user
-        ).select_related("product")
+        favorites = Favorite.objects.filter(user=request.user).select_related("product")
         serializer = FavoriteSerializer(favorites, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -245,26 +216,26 @@ class FavoriteView(APIView):
         )
 
 
-# class FavoriteDetailView(APIView):
-#     def get(self, request, product_slug):
-#         product = get_object_or_404(Product, slug=product_slug)
-#         try:
-#             favorite = Favorite.objects.get(user=request.user, product=product)
-#             serializer = FavoriteSerializer(favorite)
-#             return Response(serializer.data, status=status.HTTP_200_OK)
-#         except Favorite.DoesNotExist:
-#             return Response(
-#                 {"error": "Favorite does not exist."}, status=status.HTTP_404_NOT_FOUND
-#             )
+class FavoriteDetailView(APIView):
+    def get(self, request, product_slug):
+        product = get_object_or_404(Product, slug=product_slug)
+        try:
+            favorite = Favorite.objects.get(user=request.user, product=product)
+            serializer = FavoriteSerializer(favorite)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Favorite.DoesNotExist:
+            return Response(
+                {"error": "Favorite does not exist."}, status=status.HTTP_404_NOT_FOUND
+            )
 
-#     @swagger_auto_schema(responses={200: "Favorite deleted."})
-#     def delete(self, request, product_slug):
-#         product = get_object_or_404(Product, slug=product_slug)
-#         try:
-#             favorite = Favorite.objects.get(user=request.user, product=product)
-#             favorite.delete()
-#             return Response({"message": "Favorite deleted."},status=status.HTTP_200_OK)
-#         except Favorite.DoesNotExist:
-#             return Response(
-#                 {"error": "Favorite does not exist."}, status=status.HTTP_404_NOT_FOUND
-#             )
+    @swagger_auto_schema(responses={200: "Favorite deleted."})
+    def delete(self, request, product_slug):
+        product = get_object_or_404(Product, slug=product_slug)
+        try:
+            favorite = Favorite.objects.get(user=request.user, product=product)
+            favorite.delete()
+            return Response({"message": "Favorite deleted."}, status=status.HTTP_200_OK)
+        except Favorite.DoesNotExist:
+            return Response(
+                {"error": "Favorite does not exist."}, status=status.HTTP_404_NOT_FOUND
+            )

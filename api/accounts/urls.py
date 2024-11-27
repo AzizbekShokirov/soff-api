@@ -1,9 +1,10 @@
 from django.urls import path
 
+from rest_framework_simplejwt.views import TokenRefreshView
 from accounts.views import (
     ConfirmEmailView,
     FavoriteView,
-    # FavoriteDetailView,
+    FavoriteDetailView,
     LoginView,
     LogoutView,
     OTPResendView,
@@ -12,7 +13,6 @@ from accounts.views import (
     PasswordResetView,
     ProfileView,
     RegisterView,
-    TokenRefreshView,
 )
 
 app_name = "accounts"
@@ -26,7 +26,8 @@ urlpatterns = [
     ),
     path("login", LoginView.as_view(), name="login"),
     path("logout", LogoutView.as_view(), name="logout"),
-    path("profile", ProfileView.as_view(), name="profile"),
+    path("token/refresh", TokenRefreshView.as_view(), name="token-refresh"),
+    path("otp/resend", OTPResendView.as_view(), name="otp-resend"),
     path("password/change", PasswordChangeView.as_view(), name="password-change"),
     path(
         "password/reset",
@@ -38,8 +39,7 @@ urlpatterns = [
         PasswordResetConfirmView.as_view(),
         name="password-reset-confirm",
     ),
-    path("otp/resend", OTPResendView.as_view(), name="otp-resend"),
-    path("token/refresh", TokenRefreshView.as_view(), name="token-refresh"),
+    path("profile", ProfileView.as_view(), name="profile"),
     path("favorites", FavoriteView.as_view(), name="favorites"),
-    # path("favorites/<slug:product_slug>", FavoriteDetailView.as_view(), name="favorites-detail"),
+    path("favorites/<slug:product_slug>", FavoriteDetailView.as_view(), name="favorites-detail"),
 ]
