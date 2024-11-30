@@ -58,8 +58,8 @@ class UserOTPAdmin(admin.ModelAdmin):
 
 @admin.register(Favorite)
 class FavoritesAdmin(admin.ModelAdmin):
-    list_display = ("user", "product", "liked", "id", "created_at", "updated_at")
-    search_fields = ("user", "product", "liked")
-    list_filter = ("user", "liked")
-    ordering = ("id", "user", "product", "liked")
+    list_display = ("user", "product", "is_liked", "id", "created_at", "updated_at")
+    search_fields = ("user", "product", "is_liked")
+    list_filter = ("user", "is_liked")
+    ordering = ("id", "user", "product", "is_liked")
     readonly_fields = ("id", "created_at", "updated_at")
