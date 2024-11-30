@@ -209,6 +209,7 @@ class FavoriteView(APIView):
             favorite = Favorite.objects.get_or_create(
                 user=request.user, product=product
             )[0]
+
             if not favorite.is_liked:
                 favorite.is_liked = True
                 favorite.save()
