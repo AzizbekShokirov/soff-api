@@ -1,12 +1,13 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from products.models import Product
+from products.serializers import ProductSerializer
 from rest_framework import serializers
 
 from accounts.models import Favorite, User
 from accounts.utils import validate_otp, validate_password_data
-from products.models import Product
-from products.serializers import ProductSerializer
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
@@ -189,13 +190,13 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSlugSerializer(serializers.ModelSerializer):
-    product = serializers.SlugRelatedField(
+    product_slug = serializers.SlugRelatedField(
         slug_field="slug", queryset=Product.objects.all()
     )
 
     class Meta:
         model = Favorite
-        fields = ["product"]
+        fields = ["product_slug"]
 
 
 class FavoriteSerializer(serializers.ModelSerializer):

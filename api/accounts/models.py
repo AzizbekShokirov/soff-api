@@ -58,7 +58,7 @@ class Favorite(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="favorites"
     )
-    liked = models.BooleanField(default=False)
+    is_liked = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

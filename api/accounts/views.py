@@ -194,8 +194,7 @@ class ProfileView(APIView):
 
 class FavoriteView(APIView):
     def get(self, request):
-        favorites = Favorite.objects.filter(user=request.user, liked=True).select_related("product")
-
+        favorites = Favorite.objects.filter(user=request.user, is_liked=True).select_related("product")
         serializer = FavoriteSerializer(favorites, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -204,8 +203,8 @@ class FavoriteView(APIView):
         product = get_object_or_404(Product, slug=request.data["product_slug"])
         try:
             favorite = Favorite.objects.get_or_create(user=request.user, product=product)[0]
-            if not favorite.liked:
-                favorite.liked = True
+            if not favorite.is_liked:
+                favorite.is_liked = True
                 favorite.save()
                 return Response({"message": "Favorite added."}, status=status.HTTP_200_OK)
             return Response(
@@ -220,7 +219,7 @@ class FavoriteView(APIView):
     def delete(self, request):
         favorites = Favorite.objects.filter(user=request.user).select_related("product")
         for favorite in favorites:
-            favorite.liked = False
+            favorite.is_liked = False
             favorite.save()
         return Response(
             {"message": "All favorites deleted."}, status=status.HTTP_200_OK
@@ -244,8 +243,8 @@ class FavoriteDetailView(APIView):
         product = get_object_or_404(Product, slug=product_slug)
         try:
             favorite = Favorite.objects.get(user=request.user, product=product)
-            if favorite.liked:
-                favorite.liked = False
+            if favorite.is_liked:
+                favorite.is_liked = False
                 favorite.save()
                 return Response({"message": "Favorite deleted."}, status=status.HTTP_200_OK)
             return Response(
