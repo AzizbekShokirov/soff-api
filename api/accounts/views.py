@@ -195,7 +195,6 @@ class ProfileView(APIView):
 class FavoriteView(APIView):
     def get(self, request):
         favorites = Favorite.objects.filter(user=request.user, is_liked=True).select_related("product")
-
         serializer = FavoriteSerializer(favorites, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
