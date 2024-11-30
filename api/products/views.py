@@ -17,7 +17,9 @@ class ProductView(APIView):
         queryset = Product.objects.all().order_by("title")
         paginator = PageNumberPagination()
         paginated_queryset = paginator.paginate_queryset(queryset, request)
-        serializer = ProductSerializer(paginated_queryset, many=True)
+        serializer = ProductSerializer(
+            paginated_queryset, many=True, context={"request": request}
+        )
         return paginator.get_paginated_response(serializer.data)
 
     @swagger_auto_schema(

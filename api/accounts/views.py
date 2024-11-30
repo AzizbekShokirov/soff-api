@@ -194,19 +194,28 @@ class ProfileView(APIView):
 
 class FavoriteView(APIView):
     def get(self, request):
-        favorites = Favorite.objects.filter(user=request.user, is_liked=True).select_related("product")
-        serializer = FavoriteSerializer(favorites, many=True)
+        favorites = Favorite.objects.filter(
+            user=request.user, is_liked=True
+        ).select_related("product")
+        serializer = FavoriteSerializer(
+            favorites, many=True, context={"request": request}
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(request_body=FavoriteSlugSerializer)
     def post(self, request):
         product = get_object_or_404(Product, slug=request.data["product_slug"])
         try:
-            favorite = Favorite.objects.get_or_create(user=request.user, product=product)[0]
+            favorite = Favorite.objects.get_or_create(
+                user=request.user, product=product
+            )[0]
+
             if not favorite.is_liked:
                 favorite.is_liked = True
                 favorite.save()
-                return Response({"message": "Favorite added."}, status=status.HTTP_200_OK)
+                return Response(
+                    {"message": "Favorite added."}, status=status.HTTP_200_OK
+                )
             return Response(
                 {"message": "Favorite already added."}, status=status.HTTP_200_OK
             )
@@ -246,7 +255,9 @@ class FavoriteDetailView(APIView):
             if favorite.is_liked:
                 favorite.is_liked = False
                 favorite.save()
-                return Response({"message": "Favorite deleted."}, status=status.HTTP_200_OK)
+                return Response(
+                    {"message": "Favorite deleted."}, status=status.HTTP_200_OK
+                )
             return Response(
                 {"message": "Favorite already deleted."}, status=status.HTTP_200_OK
             )
