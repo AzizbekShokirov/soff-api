@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.core.validators import MaxValueValidator, MinValueValidator
 from rest_framework import serializers
 
+from accounts.models import Favorite
 from categories.models import ProductCategory, RoomCategory
 from manufacturers.models import Manufacturer
 from products.models import Product, ProductImage
@@ -81,8 +82,8 @@ class ProductSerializer(serializers.ModelSerializer):
     is_ar = serializers.BooleanField()
     ar_model = serializers.URLField()
     ar_url = serializers.URLField()
+    is_favorite = serializers.SerializerMethodField()
     
-
     class Meta:
         model = Product
         exclude = ["id"]
@@ -151,3 +152,9 @@ class ProductSerializer(serializers.ModelSerializer):
                 ProductImage.objects.create(product=instance, **image_data)
 
         return instance
+
+    def get_is_favorite(self, obj):
+        user = self.context['request'].user
+        if user.is_authenticated:
+            return Favorite.objects.filter(user=user, product=obj, is_liked=True).exists()
+        return False
