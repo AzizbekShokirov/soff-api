@@ -86,7 +86,7 @@ class ProductSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Product
-        exclude = ["id"]
+        exclude = ["id", "created_at", "updated_at"]
 
     def create(self, validated_data):
         images_data = validated_data.pop("images")
