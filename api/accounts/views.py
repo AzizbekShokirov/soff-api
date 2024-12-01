@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from products.models import Product
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -196,11 +197,19 @@ class FavoriteView(APIView):
     def get(self, request):
         favorites = Favorite.objects.filter(
             user=request.user, is_liked=True
-        ).select_related("product")
-        serializer = FavoriteSerializer(
-            favorites, many=True, context={"request": request}
+        ).select_related("product").order_by("product")
+
+        # Paginate the results
+        paginator = PageNumberPagination()
+        paginated_products = paginator.paginate_queryset(favorites, request)
+        if paginated_products:
+            serializer = FavoriteSerializer(
+                paginated_products, many=True, context={"request": request}
+            )
+            return paginator.get_paginated_response(serializer.data)
+        return Response(
+            {"detail": "No products found"}, status=status.HTTP_404_NOT_FOUND
         )
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(request_body=FavoriteSlugSerializer)
     def post(self, request):
