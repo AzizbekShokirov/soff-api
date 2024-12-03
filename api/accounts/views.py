@@ -199,17 +199,13 @@ class FavoriteView(APIView):
             user=request.user, is_liked=True
         ).select_related("product").order_by("product")
 
-        # Paginate the results
         paginator = PageNumberPagination()
         paginated_products = paginator.paginate_queryset(favorites, request)
-        if paginated_products:
-            serializer = FavoriteSerializer(
-                paginated_products, many=True, context={"request": request}
-            )
-            return paginator.get_paginated_response(serializer.data)
-        return Response(
-            {"detail": "No products found"}, status=status.HTTP_404_NOT_FOUND
+        
+        serializer = FavoriteSerializer(
+            paginated_products, many=True, context={"request": request}
         )
+        return paginator.get_paginated_response(serializer.data)
 
     @swagger_auto_schema(request_body=FavoriteSlugSerializer)
     def post(self, request):
