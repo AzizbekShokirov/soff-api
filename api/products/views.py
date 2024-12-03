@@ -211,9 +211,7 @@ class ProductSearchView(APIView):
         # Paginate the results
         paginator = PageNumberPagination()
         paginated_products = paginator.paginate_queryset(products, request)
-        if paginated_products:
-            serializer = ProductSerializer(paginated_products, many=True, context={"request": request})
-            return paginator.get_paginated_response(serializer.data)
-        return Response(
-            {"detail": "No products found"}, status=status.HTTP_404_NOT_FOUND
+        serializer = ProductSerializer(
+            paginated_products, many=True, context={"request": request}
         )
+        return paginator.get_paginated_response(serializer.data)
