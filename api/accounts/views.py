@@ -18,7 +18,7 @@ from accounts.serializers import (
     LoginSerializer,
     OTPValidationSerializer,
     PasswordChangeSerializer,
-    PasswordResetConfirmSerializer,
+    PasswordResetSerializer,
     ProfileSerializer,
     RefreshTokenSerializer,
     RegisterSerializer,
@@ -130,9 +130,9 @@ class PasswordResetView(APIView):
 class PasswordResetConfirmView(APIView):
     permission_classes = [AllowAny]
 
-    @swagger_auto_schema(request_body=PasswordResetConfirmSerializer)
+    @swagger_auto_schema(request_body=PasswordResetSerializer)
     def post(self, request):
-        serializer = PasswordResetConfirmSerializer(
+        serializer = PasswordResetSerializer(
             data=request.data, context={"request": request}
         )
         if serializer.is_valid():
@@ -160,6 +160,21 @@ class OTPResendView(APIView):
             return Response(
                 {"message": "OTP has been resent to your email."},
                 status=status.HTTP_200_OK,
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class OTPValidateView(APIView):
+    permission_classes = [AllowAny]
+
+    @swagger_auto_schema(request_body=OTPValidationSerializer)
+    def post(self, request):
+        serializer = OTPValidationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"success": "OTP validated successfully."}, 
+                status=status.HTTP_200_OK
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

@@ -14,6 +14,7 @@ def reset_otp_data(user):
     user_otp = UserOTP.objects.get(user=user)
     user_otp.otp_attempts = 3
     user_otp.is_blocked = False
+    user_otp.is_validated = False
     user_otp.save()
 
 
@@ -107,6 +108,7 @@ def send_otp_email(user):
             "updated_at": timezone.now(),
         },
     )
+    user_otp.is_validated = False
     user_otp.save()
 
     subject = "OTP Verification"

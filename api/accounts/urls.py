@@ -8,6 +8,7 @@ from accounts.views import (
     LoginView,
     LogoutView,
     OTPResendView,
+    OTPValidateView,
     PasswordChangeView,
     PasswordResetConfirmView,
     PasswordResetView,
@@ -28,6 +29,7 @@ urlpatterns = [
     path("logout", LogoutView.as_view(), name="logout"),
     path("token/refresh", TokenRefreshView.as_view(), name="token-refresh"),
     path("otp/resend", OTPResendView.as_view(), name="otp-resend"),
+    path("otp/verify", OTPValidateView.as_view(), name="otp-verify"),
     path("password/change", PasswordChangeView.as_view(), name="password-change"),
     path(
         "password/reset",

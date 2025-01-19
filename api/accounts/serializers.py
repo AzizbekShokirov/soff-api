@@ -10,7 +10,7 @@ from products.models import Product
 from products.serializers import ProductImageSerializer
 from rest_framework import serializers
 
-from accounts.models import Favorite, User
+from accounts.models import Favorite, User, UserOTP
 from accounts.utils import validate_otp, validate_password_data
 
 
@@ -100,9 +100,8 @@ class PasswordChangeSerializer(serializers.Serializer):
         return user
 
 
-class PasswordResetConfirmSerializer(serializers.Serializer):
+class PasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField()
-    otp = serializers.IntegerField()
     new_password = serializers.CharField(
         write_only=True, required=True, style={"input_type": "password"}
     )
@@ -112,6 +111,7 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
 
     def validate(self, data):
         email = data.get("email")
+        
         if not email:
             raise serializers.ValidationError("Email is required.")
 
@@ -120,13 +120,24 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         except User.DoesNotExist:
             raise serializers.ValidationError("User with this email does not exist.")
 
-        validate_password_data(
-            user=user,
-            current_password=None,  # No current password needed for reset
-            new_password=data["new_password"],
-            new_password_confirm=data["new_password_confirm"],
-        )
-        validate_otp(user, data["otp"])
+        # Check if OTP is validated before allowing password reset
+        try:
+            user_otp = UserOTP.objects.get(user=user)
+            if not user_otp.is_validated:
+                raise serializers.ValidationError("OTP has not been validated. Please validate it first.")
+        except UserOTP.DoesNotExist:
+            raise serializers.ValidationError("No OTP record found for this user.")
+
+        # Validate new password with the provided data
+        try:
+            validate_password_data(
+                user=user,
+                current_password=None,  # No current password needed for reset
+                new_password=data["new_password"],
+                new_password_confirm=data["new_password_confirm"],
+            )
+        except ValidationError as e:
+            raise serializers.ValidationError(str(e))
 
         data["user"] = user
         return data
@@ -167,7 +178,15 @@ class OTPValidationSerializer(serializers.Serializer):
             raise serializers.ValidationError("User with this email does not exist.")
 
         validate_otp(user, otp)
+        data["user"] = user
         return data
+
+    def save(self, **kwargs):
+        user = self.validated_data["user"]
+        user_otp = UserOTP.objects.get(user=user)
+        user_otp.is_validated = True
+        user_otp.save()
+        return user
 
 
 class RefreshTokenSerializer(serializers.Serializer):
