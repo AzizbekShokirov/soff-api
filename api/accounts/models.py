@@ -34,6 +34,7 @@ class UserOTP(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="otp")
     otp = models.IntegerField()
     otp_attempts = models.IntegerField(default=3)
+    is_validated = models.BooleanField(default=False)
     is_blocked = models.BooleanField(default=False)
     expires_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)

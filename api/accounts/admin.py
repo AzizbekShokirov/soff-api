@@ -45,6 +45,7 @@ class UserOTPAdmin(admin.ModelAdmin):
         "user",
         "otp",
         "otp_attempts",
+        "is_validated",
         "is_blocked",
         "created_at",
         "updated_at",
