@@ -19,13 +19,12 @@ class CartProductSerializer(serializers.ModelSerializer):
 
 class CartItemGETSerializer(serializers.ModelSerializer):
     product = CartProductSerializer()
-    product_slug = serializers.SlugField(write_only=True)
     quantity = serializers.IntegerField(min_value=1)
     total_price = serializers.SerializerMethodField()
 
     class Meta:
         model = CartItem
-        fields = ["product", "product_slug", "quantity", "total_price"]
+        fields = ["product", "quantity", "total_price"]
         read_only_fields = [
             "product"
         ]  # product is in the response, but not in the request
