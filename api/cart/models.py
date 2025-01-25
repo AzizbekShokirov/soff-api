@@ -28,6 +28,7 @@ class CartItem(models.Model):
     class Meta:
         verbose_name = "Cart Item"
         verbose_name_plural = "Cart Items"
+        ordering = ("-created_at",)
 
     def total_price(self):
         return self.quantity * self.product.price
