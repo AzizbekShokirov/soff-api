@@ -111,7 +111,7 @@ class PasswordResetSerializer(serializers.Serializer):
 
     def validate(self, data):
         email = data.get("email")
-        
+
         if not email:
             raise serializers.ValidationError("Email is required.")
 
@@ -124,7 +124,9 @@ class PasswordResetSerializer(serializers.Serializer):
         try:
             user_otp = UserOTP.objects.get(user=user)
             if not user_otp.is_validated:
-                raise serializers.ValidationError("OTP has not been validated. Please validate it first.")
+                raise serializers.ValidationError(
+                    "OTP has not been validated. Please validate it first."
+                )
         except UserOTP.DoesNotExist:
             raise serializers.ValidationError("No OTP record found for this user.")
 

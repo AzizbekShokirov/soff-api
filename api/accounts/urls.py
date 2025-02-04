@@ -43,5 +43,9 @@ urlpatterns = [
     ),
     path("profile", ProfileView.as_view(), name="profile"),
     path("favorites", FavoriteView.as_view(), name="favorites"),
-    path("favorites/<slug:product_slug>", FavoriteDetailView.as_view(), name="favorites-detail"),
+    path(
+        "favorites/<slug:product_slug>",
+        FavoriteDetailView.as_view(),
+        name="favorites-detail",
+    ),
 ]

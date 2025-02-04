@@ -173,8 +173,7 @@ class OTPValidateView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(
-                {"success": "OTP validated successfully."}, 
-                status=status.HTTP_200_OK
+                {"success": "OTP validated successfully."}, status=status.HTTP_200_OK
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -210,13 +209,15 @@ class ProfileView(APIView):
 
 class FavoriteView(APIView):
     def get(self, request):
-        favorites = Favorite.objects.filter(
-            user=request.user, is_liked=True
-        ).select_related("product").order_by("product")
+        favorites = (
+            Favorite.objects.filter(user=request.user, is_liked=True)
+            .select_related("product")
+            .order_by("product")
+        )
 
         paginator = PageNumberPagination()
         paginated_products = paginator.paginate_queryset(favorites, request)
-        
+
         serializer = FavoriteSerializer(
             paginated_products, many=True, context={"request": request}
         )
