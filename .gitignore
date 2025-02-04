@@ -184,7 +184,7 @@ cython_debug/
 *.yaml
 
 # ruff cache
-.ruff-cache/
+.ruff_cache/
 
 # files
 furniture-images/
