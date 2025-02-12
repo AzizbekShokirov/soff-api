@@ -30,6 +30,7 @@ python-dotenv==1.0.1
 pytz==2024.2
 PyYAML==6.0.2
 ruff==0.9.4
+setuptools==75.8.0
 sqlparse==0.5.1
 typing_extensions==4.12.2
 tzdata==2024.2
