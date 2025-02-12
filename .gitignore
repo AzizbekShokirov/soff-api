@@ -182,3 +182,9 @@ cython_debug/
 
 # .yaml files
 *.yaml
+
+# ruff cache
+.ruff_cache/
+
+# files
+furniture-images/

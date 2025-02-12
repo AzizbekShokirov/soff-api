@@ -83,7 +83,7 @@ class ProductSerializer(serializers.ModelSerializer):
     ar_model = serializers.URLField()
     ar_url = serializers.URLField()
     is_favorite = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = Product
         exclude = ["id", "created_at", "updated_at"]
@@ -154,7 +154,9 @@ class ProductSerializer(serializers.ModelSerializer):
         return instance
 
     def get_is_favorite(self, obj):
-        user = self.context['request'].user
+        user = self.context["request"].user
         if user.is_authenticated:
-            return Favorite.objects.filter(user=user, product=obj, is_liked=True).exists()
+            return Favorite.objects.filter(
+                user=user, product=obj, is_liked=True
+            ).exists()
         return False
