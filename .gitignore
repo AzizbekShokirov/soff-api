@@ -187,4 +187,5 @@ cython_debug/
 .ruff_cache/
 
 # files
-furniture-images/
+furniture images/
+category images/
