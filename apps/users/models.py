@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 
 from apps.products.models import Product
+
 from .managers import CustomUserManager
 
 
@@ -56,9 +57,7 @@ class UserOTP(models.Model):
 
 class Favorite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favorites")
-    product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, related_name="favorites"
-    )
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="favorites")
     is_liked = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

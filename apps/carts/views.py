@@ -1,11 +1,12 @@
 from django.http import Http404
-from drf_spectacular.utils import extend_schema, OpenApiExample
+from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.users.serializers import ErrorResponseSerializer, SuccessResponseSerializer
+
 from .models import Cart, CartItem
 from .serializers import CartItemSerializer, CartSerializer
 
@@ -31,16 +32,16 @@ class CartView(APIView):
                                 "slug": "sample-product",
                                 "price": 99.99,
                                 "manufacturer": "IKEA",
-                                "images": [{"image": "http://example.com/image.jpg"}]
+                                "images": [{"image": "http://example.com/image.jpg"}],
                             },
                             "quantity": 2,
-                            "total_price": 199.98
+                            "total_price": 199.98,
                         }
                     ],
-                    "total_cost": 199.98
-                }
+                    "total_cost": 199.98,
+                },
             )
-        ]
+        ],
     )
     def get(self, request):
         cart = self.get_cart(request.user)
@@ -51,19 +52,8 @@ class CartView(APIView):
         tags=["Carts"],
         description="Add a product to the shopping cart",
         request=CartItemSerializer,
-        responses={
-            201: CartItemSerializer,
-            400: ErrorResponseSerializer
-        },
-        examples=[
-            OpenApiExample(
-                "Add to Cart Request",
-                value={
-                    "product_slug": "sample-product",
-                    "quantity": 1
-                }
-            )
-        ]
+        responses={201: CartItemSerializer, 400: ErrorResponseSerializer},
+        examples=[OpenApiExample("Add to Cart Request", value={"product_slug": "sample-product", "quantity": 1})],
     )
     def post(self, request):
         cart = self.get_cart(request.user)
@@ -89,19 +79,8 @@ class CartDetailView(APIView):
     @extend_schema(
         tags=["Carts"],
         description="Get details of a specific cart item by product slug",
-        responses={
-            200: CartItemSerializer,
-            404: ErrorResponseSerializer
-        },
-        examples=[
-            OpenApiExample(
-                "Cart Item Response",
-                value={
-                    "product_slug": "sample-product",
-                    "quantity": 2
-                }
-            )
-        ]
+        responses={200: CartItemSerializer, 404: ErrorResponseSerializer},
+        examples=[OpenApiExample("Cart Item Response", value={"product_slug": "sample-product", "quantity": 2})],
     )
     def get(self, request, product_slug=None):
         cart_item = self.get_object_by_slug(product_slug, request.user)
@@ -112,18 +91,8 @@ class CartDetailView(APIView):
         tags=["Carts"],
         description="Update the quantity of a product in the cart",
         request=CartItemSerializer,
-        responses={
-            200: CartItemSerializer,
-            400: ErrorResponseSerializer
-        },
-        examples=[
-            OpenApiExample(
-                "Update Cart Item Request",
-                value={
-                    "quantity": 3
-                }
-            )
-        ]
+        responses={200: CartItemSerializer, 400: ErrorResponseSerializer},
+        examples=[OpenApiExample("Update Cart Item Request", value={"quantity": 3})],
     )
     def put(self, request, product_slug=None):
         cart_item = self.get_object_by_slug(product_slug, request.user)
@@ -142,28 +111,19 @@ class CartDetailView(APIView):
     @extend_schema(
         tags=["Carts"],
         description="Remove a product from the cart",
-        responses={
-            204: SuccessResponseSerializer,
-            404: ErrorResponseSerializer
-        }
+        responses={204: SuccessResponseSerializer, 404: ErrorResponseSerializer},
     )
     def delete(self, request, product_slug=None):
         cart_item = self.get_object_by_slug(product_slug, request.user)
         cart_item.delete()
-        return Response(
-            {"message": "Item removed from cart."}, status=status.HTTP_204_NO_CONTENT
-        )
+        return Response({"message": "Item removed from cart."}, status=status.HTTP_204_NO_CONTENT)
 
 
 class ClearCartView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["Carts"],
-        description="Remove all items from the user's cart",
-        responses={
-            204: SuccessResponseSerializer
-        }
+        tags=["Carts"], description="Remove all items from the user's cart", responses={204: SuccessResponseSerializer}
     )
     def delete(self, request):
         cart = Cart.objects.get(user=request.user)

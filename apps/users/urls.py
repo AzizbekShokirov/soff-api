@@ -2,8 +2,9 @@ from django.urls import path
 
 from .views import (
     ConfirmEmailView,
-    FavoriteView,
+    CustomTokenRefreshView,
     FavoriteDetailView,
+    FavoriteView,
     LoginView,
     LogoutView,
     OTPResendView,
@@ -13,7 +14,6 @@ from .views import (
     PasswordResetView,
     ProfileView,
     RegisterView,
-    CustomTokenRefreshView,
 )
 
 app_name = "accounts"

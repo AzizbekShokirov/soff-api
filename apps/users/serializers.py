@@ -10,18 +10,15 @@ from apps.categories.models import ProductCategory, RoomCategory
 from apps.manufacturers.models import Manufacturer
 from apps.products.models import Product
 from apps.products.serializers import ProductImageSerializer
+
 from .models import Favorite, User, UserOTP
 from .utils import validate_otp, validate_password_data
 
 
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
-    password = serializers.CharField(
-        write_only=True, required=True, style={"input_type": "password"}
-    )
-    password_confirm = serializers.CharField(
-        write_only=True, required=True, style={"input_type": "password"}
-    )
+    password = serializers.CharField(write_only=True, required=True, style={"input_type": "password"})
+    password_confirm = serializers.CharField(write_only=True, required=True, style={"input_type": "password"})
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
     image = serializers.ImageField(required=False)
@@ -74,15 +71,9 @@ class LoginSerializer(serializers.Serializer):
 
 
 class PasswordChangeSerializer(serializers.Serializer):
-    current_password = serializers.CharField(
-        write_only=True, style={"input_type": "password"}
-    )
-    new_password = serializers.CharField(
-        write_only=True, style={"input_type": "password"}
-    )
-    new_password_confirm = serializers.CharField(
-        write_only=True, style={"input_type": "password"}
-    )
+    current_password = serializers.CharField(write_only=True, style={"input_type": "password"})
+    new_password = serializers.CharField(write_only=True, style={"input_type": "password"})
+    new_password_confirm = serializers.CharField(write_only=True, style={"input_type": "password"})
 
     def validate(self, data):
         validate_password_data(
@@ -102,12 +93,8 @@ class PasswordChangeSerializer(serializers.Serializer):
 
 class PasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField()
-    new_password = serializers.CharField(
-        write_only=True, required=True, style={"input_type": "password"}
-    )
-    new_password_confirm = serializers.CharField(
-        write_only=True, required=True, style={"input_type": "password"}
-    )
+    new_password = serializers.CharField(write_only=True, required=True, style={"input_type": "password"})
+    new_password_confirm = serializers.CharField(write_only=True, required=True, style={"input_type": "password"})
 
     def validate(self, data):
         email = data.get("email")
@@ -124,9 +111,7 @@ class PasswordResetSerializer(serializers.Serializer):
         try:
             user_otp = UserOTP.objects.get(user=user)
             if not user_otp.is_validated:
-                raise serializers.ValidationError(
-                    "OTP has not been validated. Please validate it first."
-                )
+                raise serializers.ValidationError("OTP has not been validated. Please validate it first.")
         except UserOTP.DoesNotExist:
             raise serializers.ValidationError("No OTP record found for this user.")
 
@@ -222,9 +207,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if "image" in data:
             if data["image"].size > 2 * 1024 * 1024:
-                raise serializers.ValidationError(
-                    "The image size should not exceed 2MB."
-                )
+                raise serializers.ValidationError("The image size should not exceed 2MB.")
         return data
 
     def update(self, instance, validated_data):
@@ -234,9 +217,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSlugSerializer(serializers.ModelSerializer):
-    product_slug = serializers.SlugRelatedField(
-        slug_field="slug", queryset=Product.objects.all()
-    )
+    product_slug = serializers.SlugRelatedField(slug_field="slug", queryset=Product.objects.all())
 
     class Meta:
         model = Favorite

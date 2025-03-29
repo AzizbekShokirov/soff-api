@@ -1,13 +1,14 @@
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from django.http import Http404
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiExample, OpenApiParameter, extend_schema
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.users.serializers import ErrorResponseSerializer, SuccessResponseSerializer
+
 from .models import Product
 from .serializers import ProductSerializer
 
@@ -44,30 +45,25 @@ class ProductView(APIView):
                             "ar_model": "http://example.com/ar-model",
                             "ar_url": "http://example.com/ar-url",
                             "is_favorite": False,
-                            "slug": "modern-sofa"
+                            "slug": "modern-sofa",
                         }
-                    ]
-                }
+                    ],
+                },
             )
-        ]
+        ],
     )
     def get(self, request):
         queryset = Product.objects.all().order_by("title")
         paginator = PageNumberPagination()
         paginated_queryset = paginator.paginate_queryset(queryset, request)
-        serializer = ProductSerializer(
-            paginated_queryset, many=True, context={"request": request}
-        )
+        serializer = ProductSerializer(paginated_queryset, many=True, context={"request": request})
         return paginator.get_paginated_response(serializer.data)
 
     @extend_schema(
         tags=["Products"],
         description="Create a new product",
         request=ProductSerializer,
-        responses={
-            201: ProductSerializer,
-            400: ErrorResponseSerializer
-        },
+        responses={201: ProductSerializer, 400: ErrorResponseSerializer},
         examples=[
             OpenApiExample(
                 "Create Product Request",
@@ -87,10 +83,10 @@ class ProductView(APIView):
                     "images": [{"image": "http://example.com/table-1.jpg"}],
                     "is_ar": False,
                     "ar_model": "",
-                    "ar_url": ""
-                }
+                    "ar_url": "",
+                },
             )
-        ]
+        ],
     )
     def post(self, request):
         serializer = ProductSerializer(data=request.data)
@@ -110,10 +106,7 @@ class ProductDetailView(APIView):
     @extend_schema(
         tags=["Products"],
         description="Get details of a specific product by slug",
-        responses={
-            200: ProductSerializer,
-            404: ErrorResponseSerializer
-        }
+        responses={200: ProductSerializer, 404: ErrorResponseSerializer},
     )
     def get(self, request, product_slug):
         try:
@@ -130,11 +123,7 @@ class ProductDetailView(APIView):
         tags=["Products"],
         description="Update a product's information",
         request=ProductSerializer,
-        responses={
-            200: ProductSerializer,
-            400: ErrorResponseSerializer,
-            404: ErrorResponseSerializer
-        },
+        responses={200: ProductSerializer, 400: ErrorResponseSerializer, 404: ErrorResponseSerializer},
         examples=[
             OpenApiExample(
                 "Update Product Request",
@@ -142,10 +131,10 @@ class ProductDetailView(APIView):
                     "price": 179.99,
                     "color": "Dark Brown",
                     "is_ar": True,
-                    "ar_model": "http://example.com/updated-ar-model"
-                }
+                    "ar_model": "http://example.com/updated-ar-model",
+                },
             )
-        ]
+        ],
     )
     def put(self, request, product_slug):
         try:
@@ -164,10 +153,7 @@ class ProductDetailView(APIView):
     @extend_schema(
         tags=["Products"],
         description="Delete a product",
-        responses={
-            204: SuccessResponseSerializer,
-            404: ErrorResponseSerializer
-        }
+        responses={204: SuccessResponseSerializer, 404: ErrorResponseSerializer},
     )
     def delete(self, request, product_slug):
         try:
@@ -193,8 +179,8 @@ class ProductFilterView(APIView):
                 required=False,
                 examples=[
                     OpenApiExample("Single category", value="living-room"),
-                    OpenApiExample("Multiple categories", value="living-room,bedroom,kitchen")
-                ]
+                    OpenApiExample("Multiple categories", value="living-room,bedroom,kitchen"),
+                ],
             ),
             OpenApiParameter(
                 name="product_category",
@@ -203,8 +189,8 @@ class ProductFilterView(APIView):
                 required=False,
                 examples=[
                     OpenApiExample("Single category", value="sofa"),
-                    OpenApiExample("Multiple categories", value="sofa,chair,table")
-                ]
+                    OpenApiExample("Multiple categories", value="sofa,chair,table"),
+                ],
             ),
             OpenApiParameter(
                 name="manufacturer",
@@ -213,28 +199,25 @@ class ProductFilterView(APIView):
                 required=False,
                 examples=[
                     OpenApiExample("Single manufacturer", value="ikea"),
-                    OpenApiExample("Multiple manufacturers", value="ikea,dafna")
-                ]
+                    OpenApiExample("Multiple manufacturers", value="ikea,dafna"),
+                ],
             ),
             OpenApiParameter(
                 name="min_price",
                 description="Filter by minimum price.",
                 type=OpenApiTypes.NUMBER,
                 required=False,
-                examples=[OpenApiExample("Minimum price", value=100)]
+                examples=[OpenApiExample("Minimum price", value=100)],
             ),
             OpenApiParameter(
                 name="max_price",
                 description="Filter by maximum price.",
                 type=OpenApiTypes.NUMBER,
                 required=False,
-                examples=[OpenApiExample("Maximum price", value=500)]
+                examples=[OpenApiExample("Maximum price", value=500)],
             ),
         ],
-        responses={
-            200: ProductSerializer(many=True),
-            400: ErrorResponseSerializer
-        }
+        responses={200: ProductSerializer(many=True), 400: ErrorResponseSerializer},
     )
     def get(self, request):
         queryset = Product.objects.all().order_by("id")
@@ -277,9 +260,7 @@ class ProductFilterView(APIView):
         paginator = PageNumberPagination()
         paginated_queryset = paginator.paginate_queryset(queryset, request)
 
-        serializer = ProductSerializer(
-            paginated_queryset, many=True, context={"request": request}
-        )
+        serializer = ProductSerializer(paginated_queryset, many=True, context={"request": request})
 
         return paginator.get_paginated_response(serializer.data)
 
@@ -296,14 +277,11 @@ class ProductSearchView(APIView):
                 required=True,
                 examples=[
                     OpenApiExample("Basic search", value="leather sofa"),
-                    OpenApiExample("Specific search", value="ikea kitchen table")
-                ]
+                    OpenApiExample("Specific search", value="ikea kitchen table"),
+                ],
             )
         ],
-        responses={
-            200: ProductSerializer(many=True),
-            400: ErrorResponseSerializer
-        }
+        responses={200: ProductSerializer(many=True), 400: ErrorResponseSerializer},
     )
     def get(self, request, *args, **kwargs):
         query = request.query_params.get("q", None)
@@ -333,7 +311,5 @@ class ProductSearchView(APIView):
         # Paginate the results
         paginator = PageNumberPagination()
         paginated_products = paginator.paginate_queryset(products, request)
-        serializer = ProductSerializer(
-            paginated_products, many=True, context={"request": request}
-        )
+        serializer = ProductSerializer(paginated_products, many=True, context={"request": request})
         return paginator.get_paginated_response(serializer.data)

@@ -1,4 +1,4 @@
-import random
+import secrets
 from datetime import timedelta
 
 from django.conf import settings
@@ -29,9 +29,7 @@ def validate_otp(user, otp):
         user_otp.save()
 
     if user_otp.is_blocked:
-        raise ValidationError(
-            "Your account is blocked due to too many failed OTP attempts. Please try again later."
-        )
+        raise ValidationError("Your account is blocked due to too many failed OTP attempts. Please try again later.")
     if user_otp.is_max_attempts_reached():
         user_otp.is_blocked = True
         user_otp.save()
@@ -57,30 +55,20 @@ def validate_password_data(
         raise ValidationError({"current_password": "Current password is not correct."})
 
     if current_password and new_password == current_password:
-        raise ValidationError(
-            {"new_password": "New password cannot be the same as the current password."}
-        )
+        raise ValidationError({"new_password": "New password cannot be the same as the current password."})
 
     if new_password_confirm and new_password != new_password_confirm:
         raise ValidationError({"password_confirm": "Passwords do not match."})
 
     if email and new_password == email:
-        raise ValidationError(
-            {"new_password": "Password should not be the same as email."}
-        )
+        raise ValidationError({"new_password": "Password should not be the same as email."})
 
     if len(new_password) < 8:
-        raise ValidationError(
-            {"new_password": "Password should be at least 8 characters long."}
-        )
+        raise ValidationError({"new_password": "Password should be at least 8 characters long."})
     if not any(char.isdigit() for char in new_password):
-        raise ValidationError(
-            {"new_password": "Password should contain at least 1 digit."}
-        )
+        raise ValidationError({"new_password": "Password should contain at least 1 digit."})
     if not any(char.isalpha() for char in new_password):
-        raise ValidationError(
-            {"new_password": "Password should contain at least 1 letter."}
-        )
+        raise ValidationError({"new_password": "Password should contain at least 1 letter."})
 
     validate_password(new_password)
 
@@ -99,7 +87,8 @@ def send_email(subject, message, recipient_list):
 
 
 def send_otp_email(user):
-    otp = random.randint(100000, 999999)
+    # Generate 6-digit OTP using cryptographically secure random number generator
+    otp = secrets.randbelow(1000000)
     user_otp, created = UserOTP.objects.update_or_create(
         user=user,
         defaults={
@@ -112,9 +101,7 @@ def send_otp_email(user):
     user_otp.save()
 
     subject = "OTP Verification"
-    message = (
-        f"Your OTP is {otp}. It will expire in 3 minutes. Do not share it with anyone."
-    )
+    message = f"Your OTP is {otp}. It will expire in 3 minutes. Do not share it with anyone."
     send_email(subject, message, [user.email])
     return otp
 

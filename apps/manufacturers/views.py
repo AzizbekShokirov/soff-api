@@ -1,11 +1,12 @@
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema, OpenApiExample
+from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
 
 from apps.users.serializers import ErrorResponseSerializer, SuccessResponseSerializer
+
 from .models import Manufacturer
 from .serializers import ManufacturerSerializer
 
@@ -25,17 +26,17 @@ class ManufacturerView(APIView):
                         "name": "IKEA",
                         "description": "Swedish furniture manufacturer",
                         "image": "http://example.com/ikea-logo.jpg",
-                        "slug": "ikea"
+                        "slug": "ikea",
                     },
                     {
                         "name": "Ashley Furniture",
                         "description": "American furniture manufacturer",
                         "image": "http://example.com/ashley-logo.jpg",
-                        "slug": "ashley-furniture"
-                    }
-                ]
+                        "slug": "ashley-furniture",
+                    },
+                ],
             )
-        ]
+        ],
     )
     def get(self, request):
         room_categories = Manufacturer.objects.all()
@@ -46,20 +47,17 @@ class ManufacturerView(APIView):
         tags=["Manufacturers"],
         description="Create a new manufacturer",
         request=ManufacturerSerializer,
-        responses={
-            201: ManufacturerSerializer,
-            400: ErrorResponseSerializer
-        },
+        responses={201: ManufacturerSerializer, 400: ErrorResponseSerializer},
         examples=[
             OpenApiExample(
                 "Create Manufacturer Request",
                 value={
                     "name": "Dafna",
                     "description": "Local furniture manufacturer",
-                    "image": "http://example.com/dafna-logo.jpg"
-                }
+                    "image": "http://example.com/dafna-logo.jpg",
+                },
             )
-        ]
+        ],
     )
     def post(self, request):
         serializer = ManufacturerSerializer(data=request.data)
@@ -75,10 +73,7 @@ class ManufacturerDetailView(APIView):
     @extend_schema(
         tags=["Manufacturers"],
         description="Get details of a specific manufacturer by slug",
-        responses={
-            200: ManufacturerSerializer,
-            404: ErrorResponseSerializer
-        },
+        responses={200: ManufacturerSerializer, 404: ErrorResponseSerializer},
         examples=[
             OpenApiExample(
                 "Manufacturer Detail Response",
@@ -86,10 +81,10 @@ class ManufacturerDetailView(APIView):
                     "name": "IKEA",
                     "description": "Swedish furniture manufacturer",
                     "image": "http://example.com/ikea-logo.jpg",
-                    "slug": "ikea"
-                }
+                    "slug": "ikea",
+                },
             )
-        ]
+        ],
     )
     def get(self, request, slug):
         room_category = get_object_or_404(Manufacturer, slug=slug)
@@ -100,26 +95,17 @@ class ManufacturerDetailView(APIView):
         tags=["Manufacturers"],
         description="Update a manufacturer's information",
         request=ManufacturerSerializer,
-        responses={
-            200: ManufacturerSerializer,
-            400: ErrorResponseSerializer,
-            404: ErrorResponseSerializer
-        },
+        responses={200: ManufacturerSerializer, 400: ErrorResponseSerializer, 404: ErrorResponseSerializer},
         examples=[
             OpenApiExample(
                 "Update Manufacturer Request",
-                value={
-                    "name": "IKEA International",
-                    "description": "Updated Swedish furniture manufacturer"
-                }
+                value={"name": "IKEA International", "description": "Updated Swedish furniture manufacturer"},
             )
-        ]
+        ],
     )
     def put(self, request, slug):
         room_category = get_object_or_404(Manufacturer, slug=slug)
-        serializer = ManufacturerSerializer(
-            room_category, data=request.data, partial=True
-        )
+        serializer = ManufacturerSerializer(room_category, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -128,10 +114,7 @@ class ManufacturerDetailView(APIView):
     @extend_schema(
         tags=["Manufacturers"],
         description="Delete a manufacturer",
-        responses={
-            204: SuccessResponseSerializer,
-            404: ErrorResponseSerializer
-        }
+        responses={204: SuccessResponseSerializer, 404: ErrorResponseSerializer},
     )
     def delete(self, request, slug):
         room_category = get_object_or_404(Manufacturer, slug=slug)

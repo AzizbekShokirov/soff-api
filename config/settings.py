@@ -56,9 +56,7 @@ INSTALLED_APPS = [
 ]
 
 SWAGGER_SETTINGS = {
-    "SECURITY_DEFINITIONS": {
-        "Token": {"type": "apiKey", "name": "Authorization", "in": "header"}
-    },
+    "SECURITY_DEFINITIONS": {"Token": {"type": "apiKey", "name": "Authorization", "in": "header"}},
     "USE_SESSION_AUTH": False,
 }
 
@@ -321,9 +319,7 @@ MEDIA_URL = "media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # CORS settings for development
-CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(
-    ","
-)  # Allows only this origin to send requests
+CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")  # Allows only this origin to send requests
 CORS_ALLOW_CREDENTIALS = True  # Allows cookies to be sent
 CORS_ALLOW_ALL_ORIGINS = False  # Disallow all origins
 

@@ -2,6 +2,7 @@ from django.forms import ValidationError
 from rest_framework import serializers
 
 from apps.products.serializers import ProductImageSerializer
+
 from .models import Cart, CartItem, Product
 
 
@@ -25,9 +26,7 @@ class CartItemGETSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = ["product", "quantity", "total_price"]
-        read_only_fields = [
-            "product"
-        ]  # product is in the response, but not in the request
+        read_only_fields = ["product"]  # product is in the response, but not in the request
 
     def get_total_price(self, obj):
         return obj.total_price()

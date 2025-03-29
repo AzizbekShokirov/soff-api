@@ -3,9 +3,10 @@ from decimal import Decimal
 from django.core.validators import MaxValueValidator, MinValueValidator
 from rest_framework import serializers
 
-from apps.users.models import Favorite
 from apps.categories.models import ProductCategory, RoomCategory
 from apps.manufacturers.models import Manufacturer
+from apps.users.models import Favorite
+
 from .models import Product, ProductImage
 
 
@@ -69,15 +70,9 @@ class ProductSerializer(serializers.ModelSerializer):
             MinValueValidator(Decimal("0.0")),
         ],
     )
-    room_category = serializers.SlugRelatedField(
-        slug_field="slug", queryset=RoomCategory.objects.all()
-    )
-    product_category = serializers.SlugRelatedField(
-        slug_field="slug", queryset=ProductCategory.objects.all()
-    )
-    manufacturer = serializers.SlugRelatedField(
-        slug_field="slug", queryset=Manufacturer.objects.all()
-    )
+    room_category = serializers.SlugRelatedField(slug_field="slug", queryset=RoomCategory.objects.all())
+    product_category = serializers.SlugRelatedField(slug_field="slug", queryset=ProductCategory.objects.all())
+    manufacturer = serializers.SlugRelatedField(slug_field="slug", queryset=Manufacturer.objects.all())
     images = ProductImageSerializer(many=True)
     is_ar = serializers.BooleanField()
     ar_model = serializers.URLField()
@@ -120,9 +115,7 @@ class ProductSerializer(serializers.ModelSerializer):
         manufacturer_data = validated_data.pop("manufacturer", None)
 
         if room_category_data:
-            room_category, created = RoomCategory.objects.get(
-                id=instance.room_category.id, defaults=room_category_data
-            )
+            room_category, created = RoomCategory.objects.get(id=instance.room_category.id, defaults=room_category_data)
             instance.room_category = room_category
 
         if product_category_data:
@@ -132,9 +125,7 @@ class ProductSerializer(serializers.ModelSerializer):
             instance.product_category = product_category
 
         if manufacturer_data:
-            manufacturer, created = Manufacturer.objects.get(
-                id=instance.manufacturer.id, defaults=manufacturer_data
-            )
+            manufacturer, created = Manufacturer.objects.get(id=instance.manufacturer.id, defaults=manufacturer_data)
             instance.manufacturer = manufacturer
 
         # Update other fields
@@ -156,7 +147,5 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_is_favorite(self, obj) -> bool:
         user = self.context["request"].user
         if user.is_authenticated:
-            return Favorite.objects.filter(
-                user=user, product=obj, is_liked=True
-            ).exists()
+            return Favorite.objects.filter(user=user, product=obj, is_liked=True).exists()
         return False

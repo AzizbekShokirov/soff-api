@@ -21,15 +21,9 @@ class Product(models.Model):
         default=0.0,
         validators=[MinValueValidator(0.0), MaxValueValidator(5.0)],
     )
-    room_category = models.ForeignKey(
-        RoomCategory, on_delete=models.CASCADE, related_name="products"
-    )
-    product_category = models.ForeignKey(
-        ProductCategory, on_delete=models.CASCADE, related_name="products"
-    )
-    manufacturer = models.ForeignKey(
-        Manufacturer, on_delete=models.CASCADE, related_name="products"
-    )
+    room_category = models.ForeignKey(RoomCategory, on_delete=models.CASCADE, related_name="products")
+    product_category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE, related_name="products")
+    manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE, related_name="products")
     is_ar = models.BooleanField(default=False)
     ar_model = models.URLField(max_length=200, blank=True, null=True)
     ar_url = models.URLField(max_length=200, blank=True, null=True)
@@ -46,9 +40,7 @@ class Product(models.Model):
 
 
 class ProductImage(models.Model):
-    product = models.ForeignKey(
-        Product, related_name="images", on_delete=models.CASCADE
-    )
+    product = models.ForeignKey(Product, related_name="images", on_delete=models.CASCADE)
     image = models.ImageField(upload_to="images/products")
 
     class Meta:

@@ -1,7 +1,7 @@
-from django.contrib.auth.models import update_last_login
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.models import update_last_login
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema, OpenApiExample
+from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
@@ -12,9 +12,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from apps.products.models import Product
+
 from .models import Favorite, User
 from .serializers import (
     EmailValidationSerializer,
+    ErrorResponseSerializer,
     FavoriteSerializer,
     FavoriteSlugSerializer,
     LoginSerializer,
@@ -25,8 +27,7 @@ from .serializers import (
     RefreshTokenResponseSerializer,
     RefreshTokenSerializer,
     RegisterSerializer,
-    ErrorResponseSerializer,
-    SuccessResponseSerializer
+    SuccessResponseSerializer,
 )
 from .utils import reset_otp_data, send_confirmation_email, send_otp_email
 
@@ -50,10 +51,7 @@ class RegisterView(APIView):
         tags=["Users"],
         description="Register a new user account. An OTP will be sent to the user's email for verification.",
         request=RegisterSerializer,
-        responses={
-            201: SuccessResponseSerializer,
-            400: ErrorResponseSerializer
-        },
+        responses={201: SuccessResponseSerializer, 400: ErrorResponseSerializer},
         examples=[
             OpenApiExample(
                 "Register Request",
@@ -63,10 +61,10 @@ class RegisterView(APIView):
                     "password_confirm": "SecurePassword123",
                     "first_name": "John",
                     "last_name": "Doe",
-                    "phone_number": "+1234567890"
-                }
+                    "phone_number": "+1234567890",
+                },
             )
-        ]
+        ],
     )
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
@@ -92,19 +90,8 @@ class ConfirmEmailView(APIView):
         tags=["Users"],
         description="Confirm a user's email address using the OTP that was sent after registration",
         request=OTPValidationSerializer,
-        responses={
-            200: SuccessResponseSerializer,
-            400: ErrorResponseSerializer
-        },
-        examples=[
-            OpenApiExample(
-                "Confirm Email Request",
-                value={
-                    "email": "user@example.com",
-                    "otp": 123456
-                }
-            )
-        ]
+        responses={200: SuccessResponseSerializer, 400: ErrorResponseSerializer},
+        examples=[OpenApiExample("Confirm Email Request", value={"email": "user@example.com", "otp": 123456})],
     )
     def post(self, request):
         serializer = OTPValidationSerializer(data=request.data)
@@ -127,26 +114,26 @@ class LoginView(APIView):
         description="Authenticate a user and return JWT tokens",
         request=LoginSerializer,
         responses={
-            200: {"type": "object", "properties": {
-                "user": {"type": "object", "properties": {
-                    "email": {"type": "string"},
-                    "tokens": {"type": "object", "properties": {
-                        "access": {"type": "string"},
-                        "refresh": {"type": "string"}
-                    }}
-                }}
-            }},
-            400: ErrorResponseSerializer
+            200: {
+                "type": "object",
+                "properties": {
+                    "user": {
+                        "type": "object",
+                        "properties": {
+                            "email": {"type": "string"},
+                            "tokens": {
+                                "type": "object",
+                                "properties": {"access": {"type": "string"}, "refresh": {"type": "string"}},
+                            },
+                        },
+                    }
+                },
+            },
+            400: ErrorResponseSerializer,
         },
         examples=[
-            OpenApiExample(
-                "Login Request",
-                value={
-                    "email": "user@example.com",
-                    "password": "SecurePassword123"
-                }
-            )
-        ]
+            OpenApiExample("Login Request", value={"email": "user@example.com", "password": "SecurePassword123"})
+        ],
     )
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
@@ -172,18 +159,8 @@ class LogoutView(APIView):
         tags=["Users"],
         description="Logout a user by blacklisting their refresh token",
         request=RefreshTokenSerializer,
-        responses={
-            205: SuccessResponseSerializer,
-            400: ErrorResponseSerializer
-        },
-        examples=[
-            OpenApiExample(
-                "Logout Request",
-                value={
-                    "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
-                }
-            )
-        ]
+        responses={205: SuccessResponseSerializer, 400: ErrorResponseSerializer},
+        examples=[OpenApiExample("Logout Request", value={"refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."})],
     )
     def post(self, request):
         serializer = RefreshTokenSerializer(data=request.data)
@@ -199,9 +176,7 @@ class LogoutView(APIView):
                     status=status.HTTP_205_RESET_CONTENT,
                 )
             except TokenError:
-                return Response(
-                    {"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -210,18 +185,8 @@ class PasswordResetView(APIView):
         tags=["Users"],
         description="Request a password reset. An OTP will be sent to the user's email.",
         request=EmailValidationSerializer,
-        responses={
-            200: SuccessResponseSerializer,
-            400: ErrorResponseSerializer
-        },
-        examples=[
-            OpenApiExample(
-                "Password Reset Request",
-                value={
-                    "email": "user@example.com"
-                }
-            )
-        ]
+        responses={200: SuccessResponseSerializer, 400: ErrorResponseSerializer},
+        examples=[OpenApiExample("Password Reset Request", value={"email": "user@example.com"})],
     )
     def post(self, request):
         serializer = EmailValidationSerializer(data=request.data)
@@ -240,33 +205,26 @@ class PasswordResetConfirmView(APIView):
         tags=["Users"],
         description="Confirm password reset using OTP and set a new password",
         request=PasswordResetSerializer,
-        responses={
-            200: SuccessResponseSerializer,
-            400: ErrorResponseSerializer
-        },
+        responses={200: SuccessResponseSerializer, 400: ErrorResponseSerializer},
         examples=[
             OpenApiExample(
                 "Password Reset Confirm Request",
                 value={
                     "email": "user@example.com",
                     "new_password": "NewSecurePassword123",
-                    "new_password_confirm": "NewSecurePassword123"
-                }
+                    "new_password_confirm": "NewSecurePassword123",
+                },
             )
-        ]
+        ],
     )
     def post(self, request):
-        serializer = PasswordResetSerializer(
-            data=request.data, context={"request": request}
-        )
+        serializer = PasswordResetSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             user = serializer.save()
             reset_otp_data(user)
             send_confirmation_email(request, user, purpose="password_reset")
             return Response(
-                {
-                    "success": "Password has been reset successfully. Please log in with your new password."
-                },
+                {"success": "Password has been reset successfully. Please log in with your new password."},
                 status=status.HTTP_200_OK,
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -277,18 +235,8 @@ class OTPResendView(APIView):
         tags=["Users"],
         description="Resend OTP to the user's email",
         request=EmailValidationSerializer,
-        responses={
-            200: SuccessResponseSerializer,
-            400: ErrorResponseSerializer
-        },
-        examples=[
-            OpenApiExample(
-                "OTP Resend Request",
-                value={
-                    "email": "user@example.com"
-                }
-            )
-        ]
+        responses={200: SuccessResponseSerializer, 400: ErrorResponseSerializer},
+        examples=[OpenApiExample("OTP Resend Request", value={"email": "user@example.com"})],
     )
     def post(self, request):
         serializer = EmailValidationSerializer(data=request.data)
@@ -307,27 +255,14 @@ class OTPValidateView(APIView):
         tags=["Users"],
         description="Validate an OTP",
         request=OTPValidationSerializer,
-        responses={
-            200: SuccessResponseSerializer,
-            400: ErrorResponseSerializer
-        },
-        examples=[
-            OpenApiExample(
-                "OTP Validate Request",
-                value={
-                    "email": "user@example.com",
-                    "otp": 123456
-                }
-            )
-        ]
+        responses={200: SuccessResponseSerializer, 400: ErrorResponseSerializer},
+        examples=[OpenApiExample("OTP Validate Request", value={"email": "user@example.com", "otp": 123456})],
     )
     def post(self, request):
         serializer = OTPValidationSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(
-                {"success": "OTP validated successfully."}, status=status.HTTP_200_OK
-            )
+            return Response({"success": "OTP validated successfully."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -338,30 +273,23 @@ class PasswordChangeView(APIView):
         tags=["Users"],
         description="Change the authenticated user's password",
         request=PasswordChangeSerializer,
-        responses={
-            204: SuccessResponseSerializer,
-            400: ErrorResponseSerializer
-        },
+        responses={204: SuccessResponseSerializer, 400: ErrorResponseSerializer},
         examples=[
             OpenApiExample(
                 "Password Change Request",
                 value={
                     "current_password": "CurrentPassword123",
                     "new_password": "NewPassword123",
-                    "new_password_confirm": "NewPassword123"
-                }
+                    "new_password_confirm": "NewPassword123",
+                },
             )
-        ]
+        ],
     )
     def post(self, request):
-        serializer = PasswordChangeSerializer(
-            data=request.data, context={"request": request}
-        )
+        serializer = PasswordChangeSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             user = serializer.save()
-            update_session_auth_hash(
-                request, request.user
-            )  # Keep user logged in after password change
+            update_session_auth_hash(request, request.user)  # Keep user logged in after password change
             send_confirmation_email(request, user, purpose="password_change")
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -382,10 +310,10 @@ class ProfileView(APIView):
                     "first_name": "John",
                     "last_name": "Doe",
                     "image": "http://example.com/profile.jpg",
-                    "phone_number": "+1234567890"
-                }
+                    "phone_number": "+1234567890",
+                },
             )
-        ]
+        ],
     )
     def get(self, request):
         user = request.user
@@ -396,10 +324,7 @@ class ProfileView(APIView):
         tags=["Users"],
         description="Update the authenticated user's profile information",
         request=ProfileSerializer,
-        responses={
-            200: ProfileSerializer,
-            400: ErrorResponseSerializer
-        },
+        responses={200: ProfileSerializer, 400: ErrorResponseSerializer},
         examples=[
             OpenApiExample(
                 "Profile Update Request",
@@ -407,10 +332,10 @@ class ProfileView(APIView):
                     "first_name": "Updated First Name",
                     "last_name": "Updated Last Name",
                     "phone_number": "+1234567890",
-                    "image": "http://example.com/new-avatar.jpg"
-                }
+                    "image": "http://example.com/new-avatar.jpg",
+                },
             )
-        ]
+        ],
     )
     def put(self, request):
         user = request.user
@@ -455,79 +380,51 @@ class FavoriteView(APIView):
                             "ar_model": "http://example.com/ar-model",
                             "ar_url": "http://example.com/ar-url",
                             "is_favorite": True,
-                            "slug": "modern-sofa"
+                            "slug": "modern-sofa",
                         }
-                    ]
-                }
+                    ],
+                },
             )
-        ]
+        ],
     )
     def get(self, request):
         favorites = (
-            Favorite.objects.filter(user=request.user, is_liked=True)
-            .select_related("product")
-            .order_by("product")
+            Favorite.objects.filter(user=request.user, is_liked=True).select_related("product").order_by("product")
         )
 
         paginator = PageNumberPagination()
         paginated_products = paginator.paginate_queryset(favorites, request)
 
-        serializer = FavoriteSerializer(
-            paginated_products, many=True, context={"request": request}
-        )
+        serializer = FavoriteSerializer(paginated_products, many=True, context={"request": request})
         return paginator.get_paginated_response(serializer.data)
 
     @extend_schema(
         tags=["Favorites"],
         description="Add a product to user's favorites",
         request=FavoriteSlugSerializer,
-        responses={
-            200: SuccessResponseSerializer,
-            404: ErrorResponseSerializer
-        },
-        examples=[
-            OpenApiExample(
-                "Add Favorite Request",
-                value={
-                    "product_slug": "modern-sofa"
-                }
-            )
-        ]
+        responses={200: SuccessResponseSerializer, 404: ErrorResponseSerializer},
+        examples=[OpenApiExample("Add Favorite Request", value={"product_slug": "modern-sofa"})],
     )
     def post(self, request):
         product = get_object_or_404(Product, slug=request.data["product_slug"])
         try:
-            favorite = Favorite.objects.get_or_create(
-                user=request.user, product=product
-            )[0]
+            favorite = Favorite.objects.get_or_create(user=request.user, product=product)[0]
 
             if not favorite.is_liked:
                 favorite.is_liked = True
                 favorite.save()
-                return Response(
-                    {"message": "Favorite added."}, status=status.HTTP_200_OK
-                )
-            return Response(
-                {"message": "Favorite already added."}, status=status.HTTP_200_OK
-            )
+                return Response({"message": "Favorite added."}, status=status.HTTP_200_OK)
+            return Response({"message": "Favorite already added."}, status=status.HTTP_200_OK)
         except Favorite.DoesNotExist:
-            return Response(
-                {"error": "Favorite does not exist."}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Favorite does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
-    @extend_schema(
-        tags=["Favorites"],
-        description="Clear all favorites",
-        responses={200: SuccessResponseSerializer}
-    )
+    @extend_schema(tags=["Favorites"], description="Clear all favorites", responses={200: SuccessResponseSerializer})
     def delete(self, request):
         favorites = Favorite.objects.filter(user=request.user).select_related("product")
         for favorite in favorites:
             favorite.is_liked = False
             favorite.save()
-        return Response(
-            {"message": "All favorites deleted."}, status=status.HTTP_200_OK
-        )
+        return Response({"message": "All favorites deleted."}, status=status.HTTP_200_OK)
 
 
 class FavoriteDetailView(APIView):
@@ -536,10 +433,7 @@ class FavoriteDetailView(APIView):
     @extend_schema(
         tags=["Favorites"],
         description="Get details of a favorite product",
-        responses={
-            200: FavoriteSerializer,
-            404: ErrorResponseSerializer
-        },
+        responses={200: FavoriteSerializer, 404: ErrorResponseSerializer},
         examples=[
             OpenApiExample(
                 "Favorite Detail Response",
@@ -562,10 +456,10 @@ class FavoriteDetailView(APIView):
                     "ar_model": "http://example.com/ar-model",
                     "ar_url": "http://example.com/ar-url",
                     "is_favorite": True,
-                    "slug": "modern-sofa"
-                }
+                    "slug": "modern-sofa",
+                },
             )
-        ]
+        ],
     )
     def get(self, request, product_slug):
         product = get_object_or_404(Product, slug=product_slug)
@@ -574,17 +468,12 @@ class FavoriteDetailView(APIView):
             serializer = FavoriteSerializer(favorite)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Favorite.DoesNotExist:
-            return Response(
-                {"error": "Favorite does not exist."}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Favorite does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
     @extend_schema(
         tags=["Favorites"],
         description="Remove a product from favorites",
-        responses={
-            200: SuccessResponseSerializer,
-            404: ErrorResponseSerializer
-        }
+        responses={200: SuccessResponseSerializer, 404: ErrorResponseSerializer},
     )
     def delete(self, request, product_slug):
         product = get_object_or_404(Product, slug=product_slug)
@@ -593,13 +482,7 @@ class FavoriteDetailView(APIView):
             if favorite.is_liked:
                 favorite.is_liked = False
                 favorite.save()
-                return Response(
-                    {"message": "Favorite deleted."}, status=status.HTTP_200_OK
-                )
-            return Response(
-                {"message": "Favorite already deleted."}, status=status.HTTP_200_OK
-            )
+                return Response({"message": "Favorite deleted."}, status=status.HTTP_200_OK)
+            return Response({"message": "Favorite already deleted."}, status=status.HTTP_200_OK)
         except Favorite.DoesNotExist:
-            return Response(
-                {"error": "Favorite does not exist."}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Favorite does not exist."}, status=status.HTTP_404_NOT_FOUND)
