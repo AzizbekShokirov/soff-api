@@ -55,11 +55,6 @@ INSTALLED_APPS = [
     *CUSTOM_APPS,
 ]
 
-SWAGGER_SETTINGS = {
-    "SECURITY_DEFINITIONS": {"Token": {"type": "apiKey", "name": "Authorization", "in": "header"}},
-    "USE_SESSION_AUTH": False,
-}
-
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
@@ -72,8 +67,8 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "HR AI Assistant API",
     "DESCRIPTION": "HR AI Assistant API",
     "VERSION": "1.0.0",
-    "SERVE_INCLUDE_SCHEMA": False,  # Отключаем UI для схемы
-    "COMPONENT_SPLIT_REQUEST": True,  # Исправляет ошибки сериализации
+    "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
 }
 
 CACHES = {
@@ -104,7 +99,7 @@ REST_FRAMEWORK = {
     #     "user": "1000/day",  # authenticated user
     #     "burst": "5/second",  # burst rate
     # },
-    "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S.%fZ",  # ISO 8601 format in UTC
+    "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S.%fZ",
 }
 
 MIDDLEWARE = [
@@ -214,46 +209,6 @@ LOGGING = {
             "class": "django.utils.log.AdminEmailHandler",
             "formatter": "verbose",
         },
-        "users_file": {
-            "level": "INFO",
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join(BASE_DIR, "logs", "users.log"),
-            "maxBytes": 1024 * 1024 * 10,  # 10 MB
-            "backupCount": 5,
-            "formatter": "verbose",
-        },
-        "products_file": {
-            "level": "INFO",
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join(BASE_DIR, "logs", "products.log"),
-            "maxBytes": 1024 * 1024 * 10,  # 10 MB
-            "backupCount": 5,
-            "formatter": "verbose",
-        },
-        "manufacturers_file": {
-            "level": "INFO",
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join(BASE_DIR, "logs", "manufacturers.log"),
-            "maxBytes": 1024 * 1024 * 10,  # 10 MB
-            "backupCount": 5,
-            "formatter": "verbose",
-        },
-        "carts_file": {
-            "level": "INFO",
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join(BASE_DIR, "logs", "carts.log"),
-            "maxBytes": 1024 * 1024 * 10,  # 10 MB
-            "backupCount": 5,
-            "formatter": "verbose",
-        },
-        "categories_file": {
-            "level": "INFO",
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join(BASE_DIR, "logs", "categories.log"),
-            "maxBytes": 1024 * 1024 * 10,  # 10 MB
-            "backupCount": 5,
-            "formatter": "verbose",
-        },
     },
     "loggers": {
         "django": {
@@ -274,31 +229,6 @@ LOGGING = {
         "django.security": {
             "handlers": ["mail_admins", "file"],
             "level": "WARNING",
-            "propagate": False,
-        },
-        "users": {
-            "handlers": ["users_file"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "products": {
-            "handlers": ["products_file"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "manufacturers": {
-            "handlers": ["manufacturers_file"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "carts": {
-            "handlers": ["carts_file"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "categories": {
-            "handlers": ["categories_file"],
-            "level": "INFO",
             "propagate": False,
         },
     },
