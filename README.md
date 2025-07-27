@@ -155,10 +155,6 @@ See [Swagger UI](http://localhost:8000/swagger/) or [Redoc](http://localhost:800
   Authorization: Bearer <your_token>
   ```
 
-## License
-
-MIT License. See `LICENSE` for details.
-
 ## Contact & Support
 
 For questions or support, open an issue or contact the maintainers via GitHub.
