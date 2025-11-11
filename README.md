@@ -22,6 +22,10 @@ SOFF API is a modular Django RESTful backend for a furniture e-commerce platform
 - Redis (cache)
 - Silk (profiling)
 
+## Demo Video
+
+[Watch Demo Video](./demo/soff.mp4)
+
 ## Setup & Installation
 
 1. **Clone the repository:**
