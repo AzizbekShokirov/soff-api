@@ -1,13 +1,110 @@
-[tool.black]
-line-length = 120
-target-version = ['py311']
-include = '\.pyi?$'
+[project]
+name = "soff-api"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "asgiref==3.8.1",
+    "attrs==25.3.0",
+    "autopep8==2.3.2",
+    "black==24.10.0",
+    "cfgv==3.4.0",
+    "click==8.1.7",
+    "colorama==0.4.6",
+    "distlib==0.3.9",
+    "django==5.1.3",
+    "django-cors-headers==4.4.0",
+    "django-silk==5.3.2",
+    "djangorestframework==3.15.2",
+    "djangorestframework-simplejwt==5.3.1",
+    "drf-spectacular==0.28.0",
+    "filelock==3.16.1",
+    "flake8==7.1.1",
+    "gprof2dot==2024.6.6",
+    "gunicorn==23.0.0",
+    "identify==2.6.3",
+    "inflection==0.5.1",
+    "isort==6.0.1",
+    "jsonschema==4.23.0",
+    "jsonschema-specifications==2024.10.1",
+    "mccabe==0.7.0",
+    "mypy-extensions==1.0.0",
+    "nodeenv==1.9.1",
+    "packaging==24.1",
+    "pathspec==0.12.1",
+    "pillow==10.4.0",
+    "platformdirs==4.3.6",
+    "pre-commit==4.0.1",
+    "psycopg2==2.9.10",
+    "pycodestyle==2.12.1",
+    "pyflakes==3.2.0",
+    "pyjwt==2.9.0",
+    "python-dotenv==1.0.1",
+    "pytz==2024.2",
+    "pyyaml==6.0.2",
+    "referencing==0.36.2",
+    "rpds-py==0.24.0",
+    "ruff==0.9.4",
+    "setuptools==75.8.0",
+    "sqlparse==0.5.1",
+    "typing-extensions==4.12.2",
+    "tzdata==2024.2",
+    "uritemplate==4.1.1",
+    "virtualenv==20.28.0",
+]
 
-[tool.isort]
-profile = "black"
-line_length = 120
-multi_line_output = 3
-include_trailing_comma = true
-force_grid_wrap = 0
-use_parentheses = true
-ensure_newline_before_comments = true
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["apps", "config"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+exclude = [
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "migrations",
+    "staticfiles",
+    "media",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "DJ",  # flake8-django
+]
+ignore = [
+    "E501",  # line too long (handled by formatter)
+    "B008",  # do not perform function calls in argument defaults (common in Django)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]  # Allow unused imports in __init__.py
+"**/migrations/*.py" = ["E501", "DJ"]  # Ignore long lines and Django-specific checks in migrations
+"**/tests/*.py" = ["B", "DJ"]  # Relax checks in tests
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+
+[tool.ruff.lint.isort]
+known-first-party = ["apps", "config"]
+section-order = ["future", "standard-library", "django", "third-party", "first-party", "local-folder"]
+
+[tool.ruff.lint.isort.sections]
+django = ["django"]
+
+[tool.bandit]
+exclude_dirs = ["tests", "venv", ".venv", "env", "migrations"]
+skips = ["B101", "B601"]  # Skip assert_used and shell injection checks (common in Django management commands)
